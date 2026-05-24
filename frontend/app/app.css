@@ -7,9 +7,29 @@
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
+  @apply bg-white dark:bg-black;
 
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
+}
+
+.form {
+  gap: 8px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form input {
+  color: white;
+  padding: 6px 10px;
+  backgroundColor: black;
+  border: 1px solid white;
+}
+
+.form button {
+  cursor: pointer;
+  padding: 6px 10px;
+  border: 1px solid white;
 }
