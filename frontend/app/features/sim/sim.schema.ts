@@ -4,8 +4,8 @@ export enum Events {
   ROOM_JOIN = 'room.join',
   ROOM_LEAVE = 'room.leave',
   SIM_STATE_BROADCAST = 'sim.state.broadcast',
-  SIM_STATE_UPDATE_BODY = 'sim.state.update.body',
   SIM_STATE_CREATE_BODY = 'sim.state.create.body',
+  SIM_STATE_UPDATE_BODY = 'sim.state.update.body',
   SIM_STATE_DELETE_BODY = 'sim.state.remove.body',
 }
 

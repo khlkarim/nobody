@@ -12,7 +12,7 @@ export function update(
     const vi = mine[i].velocity;
     const ai = { x: 0, y: 0 };
 
-    for (let j = 0; j < mine.length; j++) {
+    for (let j = 0; j < all.length; j++) {
       if (mine[i].id === all[j].id) {
         continue;
       }
