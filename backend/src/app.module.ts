@@ -10,6 +10,9 @@ import databaseConfig from './database/config.type';
 
 import { UserEntity } from './users/users.entity';
 import { AllConfigType } from './config/config.type';
+import { Room } from './rooms/room.entity';
+import { Membership } from './rooms/membership.entity';
+import {RoomsModule} from "./rooms/rooms.module";
 
 @Module({
   imports: [
@@ -20,7 +23,6 @@ import { AllConfigType } from './config/config.type';
 
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-
       useFactory: (
         configService: ConfigService<AllConfigType>,
       ): TypeOrmModuleOptions => ({
@@ -46,12 +48,13 @@ import { AllConfigType } from './config/config.type';
           { infer: true },
         ),
 
-        entities: [UserEntity],
+        entities: [UserEntity, Room, Membership, Event],
       }),
     }),
-
     UsersModule,
     AuthModule,
+    RoomsModule
+
   ],
 })
 export class AppModule { }
