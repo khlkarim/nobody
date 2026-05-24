@@ -1,4 +1,5 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
+import { useRoomEvents } from '~/features/rooms/useRoomEvents';
 import { useRoomsStore } from '~/features/rooms/rooms.store';
 import { useAuthStore } from '~/features/auth/auth.store';
 import { RoomCard } from '~/features/rooms/components/room-card';
@@ -6,22 +7,19 @@ import { CreateRoomModal } from '~/features/rooms/components/create-room-modal';
 import './rooms.css';
 
 export default function RoomsPage() {
-    const { loadRooms, search, rooms, isLoading, startSSE } = useRoomsStore();
+    const { getRooms, rooms, isLoading } = useRoomsStore();
     const { user } = useAuthStore();
 
     const [query, setQuery] = useState('');
     const [createOpen, setCreateOpen] = useState(false);
-    const sseCleanupRef = useRef<(() => void) | null>(null);
+    useRoomEvents();
 
-    // Initial load + SSE
     useEffect(() => {
-        loadRooms();
-        sseCleanupRef.current = startSSE();
-        return () => sseCleanupRef.current?.();
+        getRooms();
     }, []);
 
     function handleSearch() {
-        search(query);
+        getRooms(query);
     }
 
     function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -30,7 +28,7 @@ export default function RoomsPage() {
 
     return (
         <div className="rooms-page">
-            {/* ── Top bar ─────────────────────────────────────────────── */}
+            {/*Top bar*/}
             <div className="rooms-topbar">
                 <input
                     className="rooms-search-input"
@@ -53,11 +51,11 @@ export default function RoomsPage() {
 
                 {/* Avatar circle */}
                 <div className="rooms-avatar">
-                    {user?.username?.[0]?.toUpperCase() ?? '?'}
+                    {/* {user?.username?.[0]?.toUpperCase() ?? '?'} */}
                 </div>
             </div>
 
-            {/* ── Room list ───────────────────────────────────────────── */}
+            {/*Room list*/}
             <div className="rooms-list">
                 {isLoading && rooms.length === 0 && (
                     <p className="rooms-empty">Loading rooms…</p>

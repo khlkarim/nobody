@@ -1,50 +1,28 @@
 import { create } from 'zustand';
-import {
-    fetchRooms,
-    searchRooms,
-    createRoom,
-    joinRoom,
-    updateRoom,
-    subscribeToRoomEvents,
-    type Room,
-} from './rooms.api';
+import { roomsApi } from './rooms.api';
+import type { Room } from './rooms.schema';
 
-interface RoomsState {
+type RoomsState = {
     rooms: Room[];
     isLoading: boolean;
     error: string | null;
 
-    // actions
-    loadRooms: () => Promise<void>;
-    search: (query: string) => Promise<void>;
-    createRoom: (name: string, description: string) => Promise<Room>;
+    getRooms: (search?: string) => Promise<void>;
+    createRoom: (name: string, description?: string) => Promise<void>;
     joinRoom: (roomId: string) => Promise<void>;
-    updateRoom: (roomId: string, name: string, description: string) => Promise<void>;
-    addRoom: (room: Room) => void;           // called by SSE
-    startSSE: () => () => void;              // returns cleanup fn
-}
+    kickUser: (roomId: string, userId: string) => Promise<void>;
+    addRoom: (room: Room) => void;
+};
 
-export const useRoomsStore = create<RoomsState>((set, get) => ({
+export const useRoomsStore = create<RoomsState>()((set, get) => ({
     rooms: [],
     isLoading: false,
     error: null,
 
-    loadRooms: async () => {
+    getRooms: async (search?) => {
         set({ isLoading: true, error: null });
         try {
-            const rooms = await fetchRooms();
-            set({ rooms, isLoading: false });
-        } catch (err) {
-            set({ error: String(err), isLoading: false });
-        }
-    },
-
-    search: async (query: string) => {
-        set({ isLoading: true, error: null });
-        try {
-            const rooms = query.trim()
-                ? await searchRooms(query)
-                : await fetchRooms();
+            const rooms = await roomsApi.getRooms(search);
             set({ rooms, isLoading: false });
         } catch (err) {
             set({ error: String(err), isLoading: false });
@@ -54,10 +32,8 @@ export const useRoomsStore = create<RoomsState>((set, get) => ({
     createRoom: async (name, description) => {
         set({ isLoading: true, error: null });
         try {
-            const room = await createRoom(name, description);
-            // SSE will add the room for other clients; add locally for creator
+            const room = await roomsApi.createRoom({ name, description });
             set((s) => ({ rooms: [room, ...s.rooms], isLoading: false }));
-            return room;
         } catch (err) {
             set({ error: String(err), isLoading: false });
             throw err;
@@ -65,9 +41,9 @@ export const useRoomsStore = create<RoomsState>((set, get) => ({
     },
 
     joinRoom: async (roomId) => {
+        set({ error: null });
         try {
-            await joinRoom(roomId);
-            // optimistically bump membership count
+            await roomsApi.joinRoom({ roomId });
             set((s) => ({
                 rooms: s.rooms.map((r) =>
                     r.id === roomId
@@ -81,11 +57,16 @@ export const useRoomsStore = create<RoomsState>((set, get) => ({
         }
     },
 
-    updateRoom: async (roomId, name, description) => {
+    kickUser: async (roomId, userId) => {
+        set({ error: null });
         try {
-            const updated = await updateRoom(roomId, name, description);
+            await roomsApi.kickUser({ roomId, userId });
             set((s) => ({
-                rooms: s.rooms.map((r) => (r.id === roomId ? { ...r, ...updated } : r)),
+                rooms: s.rooms.map((r) =>
+                    r.id === roomId
+                        ? { ...r, memberships: r.memberships.filter((m) => m.userId !== userId) }
+                        : r,
+                ),
             }));
         } catch (err) {
             set({ error: String(err) });
@@ -95,14 +76,8 @@ export const useRoomsStore = create<RoomsState>((set, get) => ({
 
     addRoom: (room) => {
         set((s) => {
-            // avoid duplicates (creator already added it)
             if (s.rooms.some((r) => r.id === room.id)) return s;
             return { rooms: [room, ...s.rooms] };
         });
-    },
-
-    startSSE: () => {
-        const cleanup = subscribeToRoomEvents((room) => get().addRoom(room));
-        return cleanup;
     },
 }));

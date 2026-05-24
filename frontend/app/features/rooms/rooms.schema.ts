@@ -1,78 +1,43 @@
-import { gql } from 'graphql-tag';
+import { z } from 'zod';
 
-export const GET_ROOMS = gql`
-  query GetRooms {
-    rooms {
-      id
-      name
-      description
-      createdAt
-      creator {
-        id
-        username
-      }
-      memberships {
-        id
-        userId
-      }
-    }
-  }
-`;
 
-export const SEARCH_ROOMS = gql`
-  query SearchRooms($name: String!) {
-    searchRooms(name: $name) {
-      id
-      name
-      description
-      createdAt
-      creator {
-        id
-        username
-      }
-      memberships {
-        id
-        userId
-      }
-    }
-  }
-`;
+export const roomCreatorSchema = z.object({
+  id: z.string().uuid(),
+  username: z.string(),
+});
 
-export const CREATE_ROOM = gql`
-  mutation CreateRoom($name: String!, $description: String) {
-    createRoom(name: $name, description: $description) {
-      id
-      name
-      description
-      createdAt
-      creator {
-        id
-        username
-      }
-      memberships {
-        id
-        userId
-      }
-    }
-  }
-`;
+export const membershipSchema = z.object({
+  id: z.string().uuid(),
+  userId: z.string().uuid(),
+});
 
-export const JOIN_ROOM = gql`
-  mutation JoinRoom($roomId: String!) {
-    joinRoom(roomId: $roomId) {
-      id
-      roomId
-      userId
-    }
-  }
-`;
+export const roomSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  description: z.string().nullable().optional(),
+  createdAt: z.string(),
+  creator: roomCreatorSchema,
+  memberships: z.array(membershipSchema),
+});
 
-export const UPDATE_ROOM = gql`
-  mutation UpdateRoom($roomId: String!, $name: String, $description: String) {
-    updateRoom(roomId: $roomId, name: $name, description: $description) {
-      id
-      name
-      description
-    }
-  }
-`;
+export const roomListSchema = z.array(roomSchema);
+
+export type Room = z.infer<typeof roomSchema>;
+export type Membership = z.infer<typeof membershipSchema>;
+
+export const createRoomRequestSchema = z.object({
+  name: z.string().min(1),
+  description: z.string().optional(),
+});
+export type CreateRoomRequest = z.infer<typeof createRoomRequestSchema>;
+
+export const joinRoomRequestSchema = z.object({
+  roomId: z.string().uuid(),
+});
+export type JoinRoomRequest = z.infer<typeof joinRoomRequestSchema>;
+
+export const kickUserRequestSchema = z.object({
+  roomId: z.string().uuid(),
+  userId: z.string().uuid(),
+});
+export type KickUserRequest = z.infer<typeof kickUserRequestSchema>;

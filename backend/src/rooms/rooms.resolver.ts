@@ -5,7 +5,7 @@ import { pubSub } from '../common/pubsub';
 
 @Resolver(() => Room)
 export class RoomsResolver {
-  constructor(private service: RoomsService) {}
+  constructor(private service: RoomsService) { }
   @Query(() => [Room])
   rooms(@Args('search', { nullable: true }) search?: string) {
     return this.service.searchRooms(search || '');
