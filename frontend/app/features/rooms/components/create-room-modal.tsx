@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRoomsStore } from '../rooms.store';
+import { useAuthStore } from '~/features/auth/auth.store'; // 1. Import Auth Store
 
 interface Props {
     onClose: () => void;
@@ -7,17 +8,20 @@ interface Props {
 
 export function CreateRoomModal({ onClose }: Props) {
     const { createRoom } = useRoomsStore();
+    const { user } = useAuthStore(); // 2. Get the current user
+
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [creating, setCreating] = useState(false);
     const [error, setError] = useState('');
 
     async function handleCreate() {
-        if (!name.trim()) return;
+        if (!name.trim() || !user) return;
+        
         setCreating(true);
         setError('');
         try {
-            await createRoom(name.trim(), description.trim());
+            await createRoom(name.trim(), user.id, description.trim());
             onClose();
         } catch (err) {
             setError(String(err));
@@ -62,7 +66,7 @@ export function CreateRoomModal({ onClose }: Props) {
                     <button
                         className="modal__btn modal__btn--primary"
                         onClick={handleCreate}
-                        disabled={creating || !name.trim()}
+                        disabled={creating || !name.trim() || !user}
                     >
                         {creating ? 'Creating…' : 'Create Room'}
                     </button>

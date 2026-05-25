@@ -8,26 +8,22 @@ import {
   JoinColumn,
 } from 'typeorm';
 
-import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { UserEntity } from '../users/users.entity';
 import { Membership } from './membership.entity';
 
-@ObjectType()
+// 1. Removed @ObjectType()
 @Entity()
 export class Room {
-  @Field(() => ID)
+  // 2. Removed @Field() decorators
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Field()
   @Column()
   name!: string;
 
-  @Field({ nullable: true })
   @Column({ nullable: true })
   description?: string;
 
-  @Field()
   @CreateDateColumn()
   createdAt!: Date;
   
@@ -38,7 +34,6 @@ export class Room {
   @JoinColumn({ name: 'creatorId' })
   creator!: UserEntity;
 
-  @Field(() => [Membership])
   @OneToMany(() => Membership, (m) => m.room, { cascade: true })
   memberships!: Membership[];
 }

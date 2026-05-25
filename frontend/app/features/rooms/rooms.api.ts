@@ -3,13 +3,17 @@ import {
     roomSchema,
     roomListSchema,
     createRoomRequestSchema,
+    updateRoomRequestSchema,
     joinRoomRequestSchema,
     kickUserRequestSchema,
     type Room,
     type CreateRoomRequest,
+    type UpdateRoomRequest,
     type JoinRoomRequest,
     type KickUserRequest,
 } from './rooms.schema';
+
+export type { Room };
 
 export const roomsApi = {
     getRooms: async (search?: string): Promise<Room[]> => {
@@ -23,9 +27,22 @@ export const roomsApi = {
         return roomSchema.parse(res.data);
     },
 
+    updateRoom: async (request: UpdateRoomRequest): Promise<Room> => {
+        updateRoomRequestSchema.parse(request);
+        const res = await api.patch(`/rooms/${request.roomId}`, {
+            name: request.name,
+            description: request.description,
+        });
+        return roomSchema.parse(res.data);
+    },
+
+    deleteRoom: async (roomId: string): Promise<void> => {
+        await api.delete(`/rooms/${roomId}`);
+    },
+
     joinRoom: async (request: JoinRoomRequest): Promise<void> => {
         joinRoomRequestSchema.parse(request);
-        await api.post(`/rooms/${request.roomId}/join`);
+        await api.post(`/rooms/${request.roomId}/join`, { userId: request.userId });
     },
 
     kickUser: async (request: KickUserRequest): Promise<void> => {

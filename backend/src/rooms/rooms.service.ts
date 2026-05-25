@@ -1,73 +1,60 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-
+import { ILike, Repository } from 'typeorm';
 import { Room } from './room.entity';
 import { Membership } from './membership.entity';
-import { pubSub } from 'src/common/pubsub';
 
 @Injectable()
 export class RoomsService {
   constructor(
-    @InjectRepository(Room)
-    private roomRepo: Repository<Room>,
-
-    @InjectRepository(Membership)
-    private memRepo: Repository<Membership>,
-
+    @InjectRepository(Room) private roomRepo: Repository<Room>,
+    @InjectRepository(Membership) private memRepo: Repository<Membership>,
   ) {}
 
-  async createRoom(name: string, description: string, creatorId: string) {
-    const room = await this.roomRepo.save({
-      name,
-      description,
+  private async findRoom(id: string): Promise<Room> {
+    const room = await this.roomRepo.findOne({
+      where: { id },
+      relations: { creator: true, memberships: true },
     });
-
-    pubSub.publish('roomUpdated', {
-      roomUpdated: { roomId: room.id },
-    });
-
+    if (!room) throw new NotFoundException(`Room ${id} not found`);
     return room;
   }
 
-  async joinRoom(roomId: string, userId: string) {
-    const membership = await this.memRepo.save({
-      room: { id: roomId } as any,
-      user: { id: userId } as any,
-    });
-
-    const memberCount = await this.memRepo.count({
-      where: { room: { id: roomId } },
-    });
-
-    pubSub.publish('memberUpdated', {
-      memberUpdated: { roomId, memberCount },
-    });
-
-    return membership;
+  async createRoom(name: string, description: string, creatorId: string): Promise<Room> {
+    const saved = await this.roomRepo.save({ name, description, creatorId });
+    await this.memRepo.save({ roomId: saved.id, userId: creatorId });
+    return this.findRoom(saved.id);
   }
 
-  async kickUser(roomId: string, userId: string) {
-    await this.memRepo.delete({
-      room: { id: roomId } as any,
-      user: { id: userId } as any,
-    });
+  async updateRoom(roomId: string, name: string, description?: string): Promise<Room> {
+    const room = await this.findRoom(roomId);
+    room.name = name;
+    if (description !== undefined) room.description = description;
+    await this.roomRepo.save(room);
+    return this.findRoom(roomId);
+  }
 
-    const memberCount = await this.memRepo.count({
-      where: { room: { id: roomId } },
-    });
-
-    pubSub.publish('memberUpdated', {
-      memberUpdated: { roomId, memberCount },
-    });
-
+  async deleteRoom(roomId: string): Promise<boolean> {
+    const room = await this.findRoom(roomId);
+    await this.roomRepo.remove(room);
     return true;
   }
 
-  searchRooms(name: string) {
-    return this.roomRepo
-      .createQueryBuilder('room')
-      .where('room.name LIKE :name', { name: `%${name}%` })
-      .getMany();
+  async joinRoom(roomId: string, userId: string): Promise<Room> {
+    const existing = await this.memRepo.findOne({ where: { roomId, userId } });
+    if (!existing) await this.memRepo.save({ roomId, userId });
+    return this.findRoom(roomId);
+  }
+
+  async kickUser(roomId: string, userId: string): Promise<Room> {
+    await this.memRepo.delete({ roomId, userId });
+    return this.findRoom(roomId);
+  }
+
+  async searchRooms(name: string): Promise<Room[]> {
+    return this.roomRepo.find({
+      where: name ? { name: ILike(`%${name}%`) } : {},
+      relations: { creator: true, memberships: true },
+    });
   }
 }

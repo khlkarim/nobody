@@ -8,10 +8,11 @@ interface Props {
 }
 
 export function EditRoomModal({ room, onClose }: Props) {
-    const { updateRoom } = useRoomsStore();
+    const { updateRoom, deleteRoom } = useRoomsStore();
     const [name, setName] = useState(room.name);
     const [description, setDescription] = useState(room.description ?? '');
     const [saving, setSaving] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     async function handleSave() {
         setSaving(true);
@@ -20,6 +21,17 @@ export function EditRoomModal({ room, onClose }: Props) {
             onClose();
         } finally {
             setSaving(false);
+        }
+    }
+
+    async function handleDelete() {
+        if (!confirm(`Delete "${room.name}"? This cannot be undone.`)) return;
+        setDeleting(true);
+        try {
+            await deleteRoom(room.id);
+            onClose();
+        } finally {
+            setDeleting(false);
         }
     }
 
@@ -48,13 +60,22 @@ export function EditRoomModal({ room, onClose }: Props) {
                 </label>
 
                 <div className="modal__actions">
+                    <button
+                        className="modal__btn modal__btn--danger"
+                        onClick={handleDelete}
+                        disabled={deleting || saving}
+                    >
+                        {deleting ? 'Deleting…' : 'Delete Room'}
+                    </button>
+
                     <button className="modal__btn" onClick={onClose}>
                         Cancel
                     </button>
+
                     <button
                         className="modal__btn modal__btn--primary"
                         onClick={handleSave}
-                        disabled={saving || !name.trim()}
+                        disabled={saving || deleting || !name.trim()}
                     >
                         {saving ? 'Saving…' : 'Save'}
                     </button>
