@@ -4,6 +4,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { SimModule } from './sim/sim.module';
 
 import authConfig from './auth/config.type';
 import databaseConfig from './database/config.type';
@@ -52,6 +53,7 @@ import { AllConfigType } from './config/config.type';
 
     UsersModule,
     AuthModule,
+    SimModule,
   ],
 })
 export class AppModule { }
