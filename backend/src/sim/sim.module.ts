@@ -5,6 +5,7 @@ import { SimGateway } from "./sim.gateway";
 import { SimService } from "./sim.service";
 import { AllConfigType } from "src/config/config.type";
 import { UsersModule } from "../users/users.module";
+import { SimController } from "./sim.controller";
 
 @Module({
   imports: [
@@ -17,5 +18,6 @@ import { UsersModule } from "../users/users.module";
     }),
   ],
   providers: [SimService, SimGateway],
+  controllers: [SimController],
 })
 export class SimModule { }

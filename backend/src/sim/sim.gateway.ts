@@ -103,7 +103,7 @@ export class SimGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage(Events.ROOM_JOIN)
-  handleJoin(@ConnectedSocket() client: Socket, @MessageBody() dto: RoomDto) {
+  async handleJoin(@ConnectedSocket() client: Socket, @MessageBody() dto: RoomDto) {
     const userId = this.getUserId(client);
     if (!userId) return;
 
@@ -132,11 +132,26 @@ export class SimGateway implements OnGatewayConnection, OnGatewayDisconnect {
       color: clientColor,
     });
 
+    const user = await this.usersService.findById(userId);
+
+    const firstName = user?.firstName || 'Unknown';
+    const lastName = user?.lastName || 'Unknown';
+    const fullname = `${firstName} ${lastName}`;
+
+    this.simService.emitEvent(roomId, {
+      data: {
+        payload: {
+          hasJoined: true,
+          fullName: fullname,
+        }
+      }
+    });
+
     console.log(`User "${userId}" joined room "${roomId}"`);
   }
 
   @SubscribeMessage(Events.ROOM_LEAVE)
-  handleLeave(@ConnectedSocket() client: Socket, @MessageBody() dto: RoomDto) {
+  async handleLeave(@ConnectedSocket() client: Socket, @MessageBody() dto: RoomDto) {
     const userId = this.getUserId(client);
     if (!userId) return;
 
@@ -148,6 +163,21 @@ export class SimGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.broadcast(roomId, Events.ROOM_LEAVE, {
       roomId,
       userId,
+    });
+
+    const user = await this.usersService.findById(userId);
+
+    const firstName = user?.firstName || 'Unknown';
+    const lastName = user?.lastName || 'Unknown';
+    const fullname = `${firstName} ${lastName}`;
+
+    this.simService.emitEvent(roomId, {
+      data: {
+        payload: {
+          hasJoined: false,
+          fullName: fullname,
+        }
+      }
     });
 
     console.log(`User "${userId}" left room "${roomId}"`);
