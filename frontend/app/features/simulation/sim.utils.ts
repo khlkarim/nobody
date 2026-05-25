@@ -56,11 +56,8 @@ export function broadcast(
   roomId: string,
   mine: BodyResponseSchema[]
 ) {
-  for (let i = 0; i < mine.length; i++) {
-    socket.emit(Events.SIM_STATE_UPDATE_BODY, {
-      roomId,
-      bodyId: mine[i].id,
-      bodyDto: mine[i],
-    })
-  }
+  socket.emit(Events.SIM_STATE_UPDATE_BODY, {
+    roomId,
+    bodies: mine
+  })
 }

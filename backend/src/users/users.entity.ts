@@ -32,6 +32,9 @@ export class UserEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @Column({ default: '#ffffff' })
+  color: string;
+
   @DeleteDateColumn()
   deletedAt: Date;
 }

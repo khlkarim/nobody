@@ -3,6 +3,7 @@ import { SimLoop } from "./sim.loop";
 export enum Events {
   ROOM_JOIN = 'room.join',
   ROOM_LEAVE = 'room.leave',
+  ROOM_USERS = 'room.users',
   SIM_STATE_BROADCAST = 'sim.state.broadcast',
   SIM_STATE_UPDATE_BODY = 'sim.state.update.body',
   SIM_STATE_CREATE_BODY = 'sim.state.create.body',
@@ -32,6 +33,7 @@ export interface SimState {
 
 export interface Client {
   id: string;
+  color: string;
 }
 
 export interface Room {

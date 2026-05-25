@@ -1,8 +1,9 @@
 import { useSim } from "../use-sim";
 import { Events } from "../sim.schema";
 import { SocketStatus } from "~/lib/use-socket";
-import { broadcast, update } from "../sim.utils";
+import { broadcast, update } from "..//sim.utils";
 import { useEffect, useRef, useState } from "react";
+import { useAuthStore } from "~/features/auth/auth.store";
 
 const RADIUS = 20;
 const CONTAINER = {
@@ -13,7 +14,7 @@ const CONTAINER = {
 export function SimTest() {
   const [isJoined, setIsJoined] = useState<boolean>(false);
   const [currentRoom, setCurrentRoom] = useState<string>('');
-  const { status, socket, simState } = useSim({ url: "http://localhost:3000" });
+  const { status, socket, simState, colors } = useSim({ url: "http://localhost:3000" });
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -42,7 +43,8 @@ export function SimTest() {
       ctx.beginPath();
       ctx.arc(x, y, body.radius, 0, Math.PI * 2);
 
-      ctx.fillStyle = "white";
+      const color = colors.get(body.owner) || '#00ff00';
+      ctx.fillStyle = color;
       ctx.fill();
 
       ctx.closePath();
@@ -50,7 +52,8 @@ export function SimTest() {
 
     if (socket.current) {
       const all = [...simState.bodies.entries()].map(p => p[1]);
-      let mine = all.filter(b => b.owner === socket.current?.id);
+      const userId = useAuthStore.getState().user?.id;
+      let mine = all.filter(b => b.owner === userId);
       mine = update(simState.deltatime, CONTAINER, mine, all);
       broadcast(socket.current, currentRoom, mine);
     }

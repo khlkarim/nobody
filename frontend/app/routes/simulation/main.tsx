@@ -1,11 +1,10 @@
-import Scene from '~/features/simulation/components/scene';
-import GUI from '~/features/simulation/components/gui';
+import { SimulationProvider } from '~/features/simulation/components/simulation-provider';
+import Simulation from '~/features/simulation/components/simulation';
 
 export default function App() {
   return (
-    <>
-			<Scene />
-			<GUI />
-    </>
-  );
+    <SimulationProvider>
+      <Simulation />
+    </SimulationProvider>
+  )
 }

@@ -64,6 +64,14 @@ export class SimLoop {
     this.gameState.bodies.delete(id);
   }
 
+  deleteBodiesByOwner(ownerId: string): void {
+    for (const [id, body] of this.gameState.bodies.entries()) {
+      if (body.owner === ownerId) {
+        this.gameState.bodies.delete(id);
+      }
+    }
+  }
+
   private tick(): void {
     const now = Date.now();
     this.gameState.deltatime = Math.min((now - this.gameState.timestamp) / 1000, 0.05);

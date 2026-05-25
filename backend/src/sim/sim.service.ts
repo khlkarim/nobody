@@ -6,16 +6,34 @@ import { Client, SimState, Room } from './sim.domain';
 @Injectable()
 export class SimService {
   private rooms: Map<string, Room> = new Map<string, Room>();
-  private clients: Map<string, Client> = new Map<string, Room>();
+  private clients: Map<string, Client> = new Map<string, Client>();
 
-  join(clientId: string, roomId: string, broadcast: (gameState: SimState) => void) {
-    let room = this.rooms.get(roomId);
-    let client = this.clients.get(clientId);
+  // Maps userId to socketId for duplicate session detection
+  private userSockets: Map<string, string> = new Map<string, string>();
 
-    if (!client) {
-      client = { id: clientId };
-      this.clients.set(clientId, client);
+  registerClient(userId: string, socketId: string, color: string) {
+    this.userSockets.set(userId, socketId);
+
+    if (!this.clients.has(userId)) {
+      this.clients.set(userId, { id: userId, color });
+    } else {
+      const client = this.clients.get(userId);
+      if (client) {
+        client.color = color;
+      }
     }
+  }
+
+  getClient(userId: string): Client | undefined {
+    return this.clients.get(userId);
+  }
+
+  getSocketIdByUserId(userId: string): string | null {
+    return this.userSockets.get(userId) || null;
+  }
+
+  join(userId: string, roomId: string, broadcast: (gameState: SimState) => void) {
+    let room = this.rooms.get(roomId);
 
     if (!room) {
       room = {
@@ -30,15 +48,16 @@ export class SimService {
       console.log(`Room created: "${roomId}"`);
     }
 
-    room.members.add(clientId);
+    room.members.add(userId);
     return room;
   }
 
-  leave(clientId: string, roomId: string) {
+  leave(userId: string, roomId: string) {
     const room = this.rooms.get(roomId);
 
     if (room) {
-      room.members.delete(clientId);
+      room.simLoop.deleteBodiesByOwner(userId);
+      room.members.delete(userId);
 
       if (room.members.size === 0) {
         room.simLoop.stop();
@@ -48,11 +67,11 @@ export class SimService {
     }
   }
 
-  createBody(roomId: string, clientId: string, bodyDto: BodyDto) {
+  createBody(roomId: string, userId: string, bodyDto: BodyDto) {
     const room = this.rooms.get(roomId);
     if (!room) return;
 
-    room.simLoop.createBody(clientId, bodyDto);
+    room.simLoop.createBody(userId, bodyDto);
   }
 
   updateBody(roomId: string, bodyId: string, bodyDto: BodyDto) {
@@ -69,14 +88,16 @@ export class SimService {
     room.simLoop.deleteBody(bodyId);
   }
 
-  remove(clientId: string) {
-    const client = this.clients.get(clientId);
-    if (!client) return [];
+  remove(userId: string) {
+    this.userSockets.delete(userId);
+
+    const client = this.clients.get(userId);
+    if (!client) return;
 
     for (const room of this.rooms.values()) {
-      this.leave(clientId, room.id);
+      this.leave(userId, room.id);
     }
 
-    this.clients.delete(clientId);
+    this.clients.delete(userId);
   }
 }

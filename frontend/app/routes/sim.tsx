@@ -1,4 +1,4 @@
-import { SimTest } from "~/features/sim/components/test";
+import { SimTest } from "~/features/simulation/components/test";
 
 export default function SimPage() {
   return (

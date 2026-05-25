@@ -5,6 +5,7 @@ export class RoomDto {
 }
 
 export class BodyDto {
+  id: string;
   mass: number;
   radius: number;
   position: Vec2;
