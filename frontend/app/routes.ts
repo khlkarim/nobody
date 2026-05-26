@@ -11,4 +11,6 @@ export default [
 
   route("/user/edit/*", "routes/user/edit.tsx"),
   route("/user/*", "routes/user/profile.tsx"),
+  route("/rooms/*", "routes/rooms/rooms.tsx"),
+  route("/profile/:id", "routes/profile/profile.tsx"),
 ] satisfies RouteConfig;

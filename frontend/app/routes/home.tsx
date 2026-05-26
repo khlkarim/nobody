@@ -1,11 +1,16 @@
-import type { Route } from "./+types/home";
+import { redirect } from "react-router";
+import { useAuthStore } from "../features/auth/auth.store";
+import { Protect } from "../features/auth/components/protect";
 import { Welcome } from "../welcome/welcome";
-import { Protect } from "~/features/auth/components/protect";
 
-export function meta({ }: Route.MetaArgs) {
-  return [
-    { title: "nobody" },
-  ];
+export function loader() {
+  const token = useAuthStore.getState().token;
+
+  if (!token) {
+    return redirect("/auth/login");
+  }
+
+  return redirect("/rooms");
 }
 
 export default function Home() {
