@@ -10,6 +10,7 @@ export function useRoomEvents() {
         });
 
         es.addEventListener('rooms-changed', () => {
+            console.log("room change detected");
             getRooms();
         });
 
