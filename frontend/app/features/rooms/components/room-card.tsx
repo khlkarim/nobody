@@ -42,11 +42,12 @@ export function RoomCard({ room }: Props) {
                             </span>
                         </div>
 
+                        <span className="room-card__tag">
+                        {room.creator.firstName} {room.creator.lastName}
+                        </span>
+
                         {isCreator && (
-                            <>
-                                <span className="room-card__tag">{formattedDate}</span>
-                                <span className="room-card__tag">creator</span>
-                            </>
+                        <span className="room-card__tag">you</span>
                         )}
                     </div>
 

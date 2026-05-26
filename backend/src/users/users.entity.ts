@@ -35,10 +35,10 @@ export class UserEntity {
   updatedAt!: Date;
 
   @Column({ default: '#ffffff' })
-  color: string;
+  color!: string;
 
   @Column({ default: UserIcon.CIRCLE })
-  icon: UserIcon;
+  icon!: UserIcon;
   
   @DeleteDateColumn()
   deletedAt!: Date;

@@ -14,12 +14,19 @@ import { AllConfigType } from './config/config.type';
 import { Room } from './rooms/room.entity';
 import { Membership } from './rooms/membership.entity';
 import {RoomsModule} from "./rooms/rooms.module";
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       load: [databaseConfig, authConfig],
+    }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: true,
+      playground: true,
     }),
 
     TypeOrmModule.forRootAsync({
@@ -52,6 +59,7 @@ import {RoomsModule} from "./rooms/rooms.module";
         entities: [UserEntity, Room, Membership, Event],
       }),
     }),
+   
     UsersModule,
     AuthModule,
     SimModule,

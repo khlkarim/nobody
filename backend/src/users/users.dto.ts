@@ -5,20 +5,20 @@ import { UserIcon } from './users.enums';
 export class CreateUserDto {
   @ApiProperty({ example: 'John' })
   @IsNotEmpty()
-  firstName: string;
+  firstName!: string;
 
   @ApiProperty({ example: 'Doe' })
   @IsNotEmpty()
-  lastName: string;
+  lastName!: string;
 
   @ApiProperty({ example: 'test1@example.com' })
   @IsNotEmpty()
   @IsEmail()
-  email: string;
+  email!: string;
 
   @ApiProperty()
   @MinLength(6)
-  password: string;
+  password!: string;
 }
 
 export class UpdateUserDto {
