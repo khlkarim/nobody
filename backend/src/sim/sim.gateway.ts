@@ -65,6 +65,7 @@ export class SimGateway implements OnGatewayConnection, OnGatewayDisconnect {
       // Store the userId on the socket for later use
       (client as any).userId = userId;
 
+      /*
       // Kick any existing session for this user
       const existingSocketId = this.simService.getSocketIdByUserId(userId);
       if (existingSocketId) {
@@ -75,6 +76,7 @@ export class SimGateway implements OnGatewayConnection, OnGatewayDisconnect {
           existingSocket.disconnect(true);
         }
       }
+      */
 
       // Register the new connection
       this.simService.registerClient(userId, client.id, user.color, user.icon);
