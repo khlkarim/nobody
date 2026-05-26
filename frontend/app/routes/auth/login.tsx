@@ -1,3 +1,4 @@
+import { Allow } from '~/features/auth/components/allow';
 import LoginForm from '~/features/auth/components/login-form';
 
 export default function LoginPage() {
@@ -10,7 +11,9 @@ export default function LoginPage() {
         minHeight: '100vh',
       }}
     >
-      <LoginForm />
+      <Allow>
+        <LoginForm />
+      </Allow>
     </div>
   );
 }

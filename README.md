@@ -13,3 +13,6 @@ cd frontend
 pnpm install 
 pnpm run dev
 ```
+
+go to: `http://localhost:5173/` to test auth
+go to: `http://localhost:5173/sim` to test sim
