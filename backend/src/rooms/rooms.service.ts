@@ -24,8 +24,14 @@ export class RoomsService {
   }
 
   getStream(): Observable<MessageEvent> {
-    return fromEvent(this.emitter, 'rooms.changed').pipe(
-      map(() => ({ data: {} }) as MessageEvent),
+    return fromEvent(this.emitter, 'rooms-changed').pipe(
+      map(
+        () =>
+          ({
+            type: 'rooms-changed',
+            data: {},
+          }) as MessageEvent,
+      ),
     );
   }
 
@@ -33,7 +39,7 @@ export class RoomsService {
     const saved = await this.roomRepo.save({ name, description, creatorId });
     await this.memRepo.save({ roomId: saved.id, userId: creatorId });
     const room = await this.findRoom(saved.id);
-    this.emitter.emit('rooms.changed');
+    this.emitter.emit('rooms-changed');
     return room;
   }
 
@@ -42,14 +48,14 @@ export class RoomsService {
     room.name = name;
     if (description !== undefined) room.description = description;
     await this.roomRepo.save(room);
-    this.emitter.emit('rooms.changed');
+    this.emitter.emit('rooms-changed');
     return this.findRoom(roomId);
   }
 
   async deleteRoom(roomId: string): Promise<boolean> {
     const room = await this.findRoom(roomId);
     await this.roomRepo.remove(room);
-    this.emitter.emit('rooms.changed');
+    this.emitter.emit('rooms-changed');
     return true;
   }
 
