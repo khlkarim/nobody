@@ -43,11 +43,14 @@ export class UsersService {
       });
     }
 
+    const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+
     return this.usersRepository.save({
       firstName: createUserDto.firstName,
       lastName: createUserDto.lastName,
       email: createUserDto.email,
       password: password,
+      color: randomColor,
     });
   }
 

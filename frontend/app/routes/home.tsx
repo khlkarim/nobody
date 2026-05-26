@@ -12,5 +12,9 @@ export function loader() {
 }
 
 export default function Home() {
-  return null;
+  return (
+    <Protect>
+      <Welcome />
+    </Protect>
+  );
 }

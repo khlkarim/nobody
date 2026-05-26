@@ -1,3 +1,4 @@
+import { Allow } from "~/features/auth/components/allow";
 import RegisterForm from "~/features/auth/components/register-form";
 
 export default function RegisterPage() {
@@ -10,7 +11,9 @@ export default function RegisterPage() {
         minHeight: '100vh',
       }}
     >
-      <RegisterForm />
+      <Allow>
+        <RegisterForm />
+      </Allow>
     </div>
   );
 }

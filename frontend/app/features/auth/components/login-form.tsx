@@ -5,7 +5,7 @@ import { useAuthStore } from '~/features/auth/auth.store';
 export default function LoginForm() {
   const navigate = useNavigate();
   const [hover, setHover] = useState(false);
-  const { login, hydrateUser, isLoading } = useAuthStore();
+  const { login, isLoading } = useAuthStore();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
