@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { UserEntity } from './users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto, UpdateUserDto } from './users.dto';
+import { UserIcon } from './users.enums';
 
 @Injectable()
 export class UsersService {
@@ -44,6 +45,7 @@ export class UsersService {
     }
 
     const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+    const defaultIcon = UserIcon.CIRCLE;
 
     return this.usersRepository.save({
       firstName: createUserDto.firstName,
@@ -51,6 +53,7 @@ export class UsersService {
       email: createUserDto.email,
       password: password,
       color: randomColor,
+      icon: defaultIcon,
     });
   }
 
@@ -59,6 +62,8 @@ export class UsersService {
       id,
       lastName: updateUserDto.lastName,
       firstName: updateUserDto.firstName,
+      ...(updateUserDto.color !== undefined && { color: updateUserDto.color }),
+      ...(updateUserDto.icon  !== undefined && { icon:  updateUserDto.icon  }),
     });
 
     if (!userPreload) {

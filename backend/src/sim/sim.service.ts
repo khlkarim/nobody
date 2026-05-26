@@ -3,6 +3,7 @@ import { SimLoop } from './sim.loop';
 import { Injectable } from '@nestjs/common';
 import { Client, SimState, Room } from './sim.domain';
 import { Subject } from 'rxjs';
+import { UserIcon } from 'src/users/users.enums';
 
 @Injectable()
 export class SimService {
@@ -13,15 +14,16 @@ export class SimService {
   // Maps userId to socketId for duplicate session detection
   private userSockets: Map<string, string> = new Map<string, string>();
 
-  registerClient(userId: string, socketId: string, color: string) {
+  registerClient(userId: string, socketId: string, color: string, icon: UserIcon) {
     this.userSockets.set(userId, socketId);
 
     if (!this.clients.has(userId)) {
-      this.clients.set(userId, { id: userId, color });
+      this.clients.set(userId, { id: userId, color, icon });
     } else {
       const client = this.clients.get(userId);
       if (client) {
         client.color = color;
+        client.icon = icon;
       }
     }
   }

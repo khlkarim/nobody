@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { SocketStatus, useSocket } from "~/lib/use-socket";
-import { Events, type BodyResponseSchema, type SimStateSchema } from "./sim.schema";
+import { Events, UserIcon, type BodyResponseSchema, type SimStateSchema } from "./sim.schema";
 
 export function useSim({ url }: { url: string }) {
   const { status, socket } = useSocket({ url });
@@ -12,6 +12,7 @@ export function useSim({ url }: { url: string }) {
   });
 
   const [colors, setColors] = useState<Map<string, string>>(new Map());
+  const [icons, setIcons] = useState<Map<string, UserIcon>>(new Map());
 
   useEffect(() => {
     if (status !== SocketStatus.CONNECTED || !socket.current) return;
@@ -21,6 +22,13 @@ export function useSim({ url }: { url: string }) {
         const next = new Map(prev);
         data.users.forEach((u: { id: string, color: string }) => {
           next.set(u.id, u.color);
+        });
+        return next;
+      });
+      setIcons(prev => {
+        const next = new Map(prev);
+        data.users.forEach((u: { id: string, icon: UserIcon }) => {
+          next.set(u.id, u.icon);
         });
         return next;
       });
@@ -35,10 +43,27 @@ export function useSim({ url }: { url: string }) {
           return next;
         });
       }
+      if (data.userId && data.icon) {
+        setIcons(prev => {
+          const next = new Map(prev);
+          next.set(data.userId, data.icon);
+          return next;
+        });
+      }
     });
 
     socket.current.on(Events.ROOM_LEAVE, (data) => {
       console.log(data)
+      setColors(prev => {
+        const next = new Map(prev);
+        next.delete(data.userId);
+        return next;
+      });
+      setIcons(prev => {
+        const next = new Map(prev);
+        next.delete(data.userId);
+        return next;
+      });
     });
 
     socket.current.on(Events.SIM_STATE_BROADCAST, (data) => {
@@ -56,5 +81,6 @@ export function useSim({ url }: { url: string }) {
     socket,
     simState,
     colors,
+    icons
   };
 }

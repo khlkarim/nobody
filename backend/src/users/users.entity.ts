@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { UserIcon } from './users.enums';
 
 @Entity({
   name: 'user',
@@ -35,6 +36,9 @@ export class UserEntity {
   @Column({ default: '#ffffff' })
   color: string;
 
+  @Column({ default: UserIcon.CIRCLE })
+  icon: UserIcon;
+  
   @DeleteDateColumn()
   deletedAt: Date;
 }

@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsOptional, MinLength } from 'class-validator';
+import { UserIcon } from './users.enums';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'John' })
@@ -43,4 +44,12 @@ export class UpdateUserDto {
   @ApiPropertyOptional({ example: 'Doe' })
   @IsOptional()
   lastName?: string;
+
+  @ApiPropertyOptional({ example: '#ff0000' })
+  @IsOptional()
+  color?: string;
+
+  @ApiPropertyOptional({ example: UserIcon.CIRCLE })
+  @IsOptional()
+  icon?: UserIcon;
 }

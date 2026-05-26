@@ -14,6 +14,7 @@ import { BodyDto, RoomDto } from './sim.dto';
 import { JwtService } from '@nestjs/jwt';
 
 import { UsersService } from '../users/users.service';
+import { UserIcon } from 'src/users/users.enums';
 
 @WebSocketGateway({
   cors: {
@@ -64,8 +65,6 @@ export class SimGateway implements OnGatewayConnection, OnGatewayDisconnect {
       // Store the userId on the socket for later use
       (client as any).userId = userId;
 
-      /*
-      @karim
       // Kick any existing session for this user
       const existingSocketId = this.simService.getSocketIdByUserId(userId);
       if (existingSocketId) {
@@ -76,13 +75,13 @@ export class SimGateway implements OnGatewayConnection, OnGatewayDisconnect {
           existingSocket.disconnect(true);
         }
       }
-      */
 
       // Register the new connection
-      this.simService.registerClient(userId, client.id, user.color);
+      this.simService.registerClient(userId, client.id, user.color, user.icon);
 
       console.log(`Client connected: ${client.id} (user: ${userId})`);
-      client.emit('connected', { socketId: client.id, userId, color: user.color });
+      client.emit('connected', { socketId: client.id, userId, color: user.color, icon: user.icon });
+      
     } catch (err) {
       console.log(`Client ${client.id} rejected: token verification failed`);
       client.emit('error', { message: 'Authentication failed' });
@@ -121,18 +120,21 @@ export class SimGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     client.join(roomId);
 
-    // Send the current users and their colors to the joined client
+    // Send the current users and their colors and their icons to the joined client
     const membersColors = Array.from(room.members).map(mId => ({
       id: mId,
-      color: this.simService.getClient(mId)?.color || '#ffffff'
+      color: this.simService.getClient(mId)?.color || '#ffffff',
+      icon: this.simService.getClient(mId)?.icon || UserIcon.CIRCLE
     }));
     client.emit(Events.ROOM_USERS, { roomId, users: membersColors });
 
     const clientColor = this.simService.getClient(userId)?.color || '#ffffff';
+    const clientIcon = this.simService.getClient(userId)?.icon || UserIcon.CIRCLE;
     this.broadcast(roomId, Events.ROOM_JOIN, {
       roomId,
       userId,
       color: clientColor,
+      icon: clientIcon
     });
 
     const user = await this.usersService.findById(userId);

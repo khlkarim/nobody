@@ -1,10 +1,10 @@
 type NotificationBadgeProps = {
-  username: string;
+  fullname: string;
   hasJoined: boolean;
 };
 
 export default function NotificationBadge({
-  username,
+  fullname,
   hasJoined,
 }: NotificationBadgeProps) {
   return (
@@ -25,7 +25,7 @@ export default function NotificationBadge({
       }}
     >
       <div>
-        <div style={{ fontWeight: "bold" }}>{username}</div>
+        <div style={{ fontWeight: "bold" }}>{fullname}</div>
         <div style={{ fontSize: 12, opacity: 0.7 }}>
           {hasJoined ? "has joined the server" : "has left the server"}
         </div>
