@@ -34,7 +34,7 @@ export default function NotificationList() {
         display: "flex",
         flexDirection: "column-reverse",
         overflow: "hidden",
-        border: "2px solid transparent",
+        border: "1px solid transparent",
         backgroundColor: "transparent",
         opacity: isLoading ? 0.5 : 1,
       }}

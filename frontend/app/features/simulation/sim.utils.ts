@@ -1,6 +1,8 @@
 import type { Socket } from "socket.io-client";
 import { Events, type BodyResponseSchema, type Vec2Schema } from "./sim.schema";
 
+const EPSILON = 1e-6;
+
 export function update(
   deltatime: number,
   container: Vec2Schema,
@@ -21,8 +23,10 @@ export function update(
       const d = { x: pj.x - pi.x, y: pj.y - pi.y };
       const distance2 = Math.pow(d.x, 2) + Math.pow(d.y, 2);
 
-      ai.x += (all[j].mass / distance2) * d.x;
-      ai.y += (all[j].mass / distance2) * d.y;
+      if (distance2 > EPSILON) {
+        ai.x += (all[j].mass / distance2) * d.x;
+        ai.y += (all[j].mass / distance2) * d.y;
+      }
     }
 
     vi.x += deltatime * ai.x;

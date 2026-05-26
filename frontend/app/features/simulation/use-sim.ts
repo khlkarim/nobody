@@ -20,48 +20,38 @@ export function useSim({ url }: { url: string }) {
     socket.current.on(Events.ROOM_USERS, (data) => {
       setColors(prev => {
         const next = new Map(prev);
-        data.users.forEach((u: { id: string, color: string }) => {
-          next.set(u.id, u.color);
+        data.users.forEach((u: { socketId: string, color: string }) => {
+          next.set(u.socketId, u.color);
         });
         return next;
       });
       setIcons(prev => {
         const next = new Map(prev);
-        data.users.forEach((u: { id: string, icon: UserIcon }) => {
-          next.set(u.id, u.icon);
+        data.users.forEach((u: { socketId: string, icon: UserIcon }) => {
+          next.set(u.socketId, u.icon);
         });
         return next;
       });
     });
 
     socket.current.on(Events.ROOM_JOIN, (data) => {
-      console.log(data);
-      if (data.userId && data.color) {
-        setColors(prev => {
-          const next = new Map(prev);
-          next.set(data.userId, data.color);
-          return next;
-        });
+      if (data.socketId && data.color) {
+        setColors(prev => new Map(prev).set(data.socketId, data.color));
       }
-      if (data.userId && data.icon) {
-        setIcons(prev => {
-          const next = new Map(prev);
-          next.set(data.userId, data.icon);
-          return next;
-        });
+      if (data.socketId && data.icon) {
+        setIcons(prev => new Map(prev).set(data.socketId, data.icon));
       }
     });
 
     socket.current.on(Events.ROOM_LEAVE, (data) => {
-      console.log(data)
       setColors(prev => {
         const next = new Map(prev);
-        next.delete(data.userId);
+        next.delete(data.socketId);
         return next;
       });
       setIcons(prev => {
         const next = new Map(prev);
-        next.delete(data.userId);
+        next.delete(data.socketId);
         return next;
       });
     });

@@ -4,6 +4,7 @@ import { Events, type SimStateSchema, type BodyResponseSchema, UserIcon } from "
 import { SocketStatus } from "~/lib/use-socket";
 import type { Socket } from "socket.io-client";
 import { useEffect } from 'react';
+import { useNavigate } from "react-router";
 
 const WIDTH = 12;
 const HEIGHT = 8;
@@ -47,6 +48,7 @@ const SimulationContext = createContext<SimulationContextType>({
 });
 
 export function SimulationProvider({ children }: { children: ReactNode }) {
+  const navigate = useNavigate();
   const [isJoined, setIsJoined] = useState(false);
   const [currentRoom, setCurrentRoom] = useState('');
   const [bodyCount, setBodyCount] = useState(0);
@@ -68,7 +70,7 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
 
     socket.current.emit(Events.ROOM_LEAVE, { id: currentRoom });
     setIsJoined(false);
-    window.location.reload();
+    navigate('/');
   }
 
   useEffect(() => {

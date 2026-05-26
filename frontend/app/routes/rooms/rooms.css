@@ -1,23 +1,14 @@
-/* ─────────────────────────────────────────────────────────────────────────────
-   Rooms — dark hand-drawn aesthetic
-   Matches the sketch wireframe: rounded outlines on near-black, amber accents
-───────────────────────────────────────────────────────────────────────────── */
-
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Space+Mono:wght@400;700&display=swap');
-
 /* ── Variables ─────────────────────────────────────────────────────────────── */
 :root {
-    --bg: #141414;
-    --surface: #1c1c1c;
-    --border: rgba(255, 255, 255, 0.28);
-    --border-hover: rgba(255, 255, 255, 0.55);
-    --text: #e8e8e8;
-    --muted: #888;
-    --accent: #e8a030;
+    --bg: black;
+    --surface: black;
+    --border: white;
+    --border-hover: white;
+    --text: white;
+    --muted: white;
+    --accent: black;
     /* amber — member count bubble */
-    --radius: 10px;
-    --font-sketch: 'Caveat', cursive;
-    --font-mono: 'Space Mono', monospace;
+    --radius: 0px;
 }
 
 /* ── Page shell ────────────────────────────────────────────────────────────── */
@@ -25,7 +16,6 @@
     min-height: 100vh;
     background: var(--bg);
     color: var(--text);
-    font-family: var(--font-mono);
     padding: 32px 48px;
     display: flex;
     flex-direction: column;
@@ -35,21 +25,16 @@
 /* ── Top bar ───────────────────────────────────────────────────────────────── */
 .rooms-topbar {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     gap: 12px;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 18px;
+    padding: 14px 0px;
 }
 
 .rooms-search-input {
     flex: 1;
     background: transparent;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
+    border: 1px solid var(--border);
     color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 13px;
     padding: 8px 14px;
     outline: none;
     transition: border-color 0.2s;
@@ -66,11 +51,8 @@
 /* shared outline button */
 .rooms-btn {
     background: transparent;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
+    border: 1px solid var(--border);
     color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 12px;
     padding: 8px 16px;
     cursor: pointer;
     white-space: nowrap;
@@ -88,15 +70,11 @@
 
 /* Avatar circle */
 .rooms-avatar {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    border: 1.5px solid var(--border);
+    width: 36px;
+    border: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 13px;
-    font-family: var(--font-mono);
     color: var(--muted);
     flex-shrink: 0;
 }
@@ -110,15 +88,13 @@
 
 .rooms-empty {
     color: var(--muted);
-    font-size: 13px;
     text-align: center;
     padding: 40px 0;
 }
 
 /* ── Room card ─────────────────────────────────────────────────────────────── */
 .room-card {
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
+    border: 1px solid var(--border);
     padding: 14px 18px;
     display: flex;
     flex-direction: column;
@@ -160,10 +136,8 @@
 
 /* room name pill */
 .room-card__name {
-    border: 1.5px solid var(--border);
-    border-radius: 6px;
+    border: 1px solid var(--border);
     padding: 4px 12px;
-    font-size: 13px;
     white-space: nowrap;
 }
 
@@ -171,7 +145,6 @@
 .room-card__bubble {
     background: var(--surface);
     border: 2px solid var(--accent);
-    border-radius: 50%;
     width: 44px;
     height: 44px;
     display: flex;
@@ -183,17 +156,12 @@
 
 .room-card__count {
     color: var(--accent);
-    font-size: 12px;
-    font-weight: 700;
-    font-family: var(--font-mono);
 }
 
 /* date / creator tags */
 .room-card__tag {
-    border: 1.5px solid var(--border);
-    border-radius: 6px;
+    border: 1px solid var(--border);
     padding: 4px 10px;
-    font-size: 12px;
     color: var(--muted);
     white-space: nowrap;
 }
@@ -207,11 +175,8 @@
 
 .room-card__btn {
     background: transparent;
-    border: 1.5px solid var(--border);
-    border-radius: 6px;
+    border: 1px solid var(--border);
     color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 12px;
     padding: 6px 18px;
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s;
@@ -234,10 +199,8 @@
 
 /* description bar */
 .room-card__description {
-    border: 1.5px solid var(--border);
-    border-radius: 6px;
+    border: 1px solid var(--border);
     padding: 8px 12px;
-    font-size: 12px;
     color: var(--muted);
     line-height: 1.5;
     max-width: 560px;
@@ -268,8 +231,7 @@
 
 .modal {
     background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
+    border: 1px solid var(--border);
     padding: 28px 32px;
     width: 420px;
     max-width: 90vw;
@@ -292,9 +254,6 @@
 }
 
 .modal__title {
-    font-family: var(--font-sketch);
-    font-size: 22px;
-    font-weight: 600;
     color: var(--text);
     margin: 0;
 }
@@ -303,18 +262,13 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
-    font-size: 12px;
     color: var(--muted);
-    font-family: var(--font-mono);
 }
 
 .modal__input {
     background: transparent;
-    border: 1.5px solid var(--border);
-    border-radius: 6px;
+    border: 1px solid var(--border);
     color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 13px;
     padding: 8px 12px;
     outline: none;
     width: 100%;
@@ -332,7 +286,6 @@
 }
 
 .modal__error {
-    font-size: 12px;
     color: #e05050;
     margin: 0;
 }
@@ -345,11 +298,8 @@
 
 .modal__btn {
     background: transparent;
-    border: 1.5px solid var(--border);
-    border-radius: 6px;
+    border: 1px solid var(--border);
     color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 12px;
     padding: 8px 20px;
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s;

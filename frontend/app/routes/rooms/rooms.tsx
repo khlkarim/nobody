@@ -4,14 +4,16 @@ import { useRoomsStore } from '~/features/rooms/rooms.store';
 import { useAuthStore } from '~/features/auth/auth.store';
 import { RoomCard } from '~/features/rooms/components/room-card';
 import { CreateRoomModal } from '~/features/rooms/components/create-room-modal';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 import { getAvatarColor } from '~/features/users/utils/avatarcolor';
 import './rooms.css';
+import { Navbar } from '~/components/navbar';
+import { Protect } from '~/features/auth/components/protect';
 
 export default function RoomsPage() {
     const { getRooms, rooms, isLoading } = useRoomsStore();
     const { user } = useAuthStore();
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
     const [query, setQuery] = useState('');
     const [createOpen, setCreateOpen] = useState(false);
@@ -35,60 +37,64 @@ export default function RoomsPage() {
         : '?';
 
     return (
-        <div className="rooms-page">
-            {/*Top bar*/}
-            <div className="rooms-topbar">
-                <input
-                    className="rooms-search-input"
-                    placeholder="Search for a room...."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                />
+        <Protect>
+            <div className="rooms-page">
+                <Navbar />
 
-                <button className="rooms-btn" onClick={handleSearch}>
-                    Search
-                </button>
+                {/*Top bar*/}
+                <div className="rooms-topbar">
+                    <input
+                        className="rooms-search-input"
+                        placeholder="search for a room...."
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                    />
 
-                <button
-                    className="rooms-btn"
-                    onClick={() => setCreateOpen(true)}
-                >
-                    Create new Room
-                </button>
+                    <button className="box" onClick={handleSearch}>
+                        search
+                    </button>
 
-                {/* Avatar circle linking dynamically to profile path */}
-                <div
-                    className="rooms-avatar"
-                    onClick={() => user && navigate(`/profile/${user.id}`)}
-                    style={{
-                        backgroundColor: user ? getAvatarColor(user.id) : '#6366f1', // Dynamically matching the profile page
-                        cursor: user ? 'pointer' : 'default',
-                    }}
-                    title={user ? `${user.firstName} ${user.lastName}` : 'Profile'}
-                >
-                    {initials}
+                    <button
+                        className="box"
+                        onClick={() => setCreateOpen(true)}
+                    >
+                        create new room
+                    </button>
+
+                    {/* Avatar circle linking dynamically to profile path */}
+                    <div
+                        className="rooms-avatar"
+                        onClick={() => user && navigate(`/user`)}
+                        style={{
+                            backgroundColor: user ? getAvatarColor(user.id) : '#6366f1', // Dynamically matching the profile page
+                            cursor: user ? 'pointer' : 'default',
+                        }}
+                        title={user ? `${user.firstName} ${user.lastName}` : 'Profile'}
+                    >
+                        {initials}
+                    </div>
                 </div>
-            </div>
 
-            {/*Room list*/}
-            <div className="rooms-list">
-                {isLoading && rooms.length === 0 && (
-                    <p className="rooms-empty">Loading rooms…</p>
+                {/*Room list*/}
+                <div className="rooms-list">
+                    {isLoading && rooms.length === 0 && (
+                        <p className="rooms-empty">Loading rooms…</p>
+                    )}
+
+                    {!isLoading && rooms.length === 0 && (
+                        <p className="rooms-empty">No rooms found. Create one!</p>
+                    )}
+
+                    {rooms.map((room) => (
+                        <RoomCard key={room.id} room={room} />
+                    ))}
+                </div>
+
+                {createOpen && (
+                    <CreateRoomModal onClose={() => setCreateOpen(false)} />
                 )}
-
-                {!isLoading && rooms.length === 0 && (
-                    <p className="rooms-empty">No rooms found. Create one!</p>
-                )}
-
-                {rooms.map((room) => (
-                    <RoomCard key={room.id} room={room} />
-                ))}
             </div>
-
-            {createOpen && (
-                <CreateRoomModal onClose={() => setCreateOpen(false)} />
-            )}
-        </div>
+        </Protect>
     );
 }

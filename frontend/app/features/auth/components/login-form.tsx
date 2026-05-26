@@ -1,10 +1,11 @@
+import { toast } from 'react-hot-toast';
+import { ERROR_MESSAGES } from '../auth.schema';
 import { Link, useNavigate } from 'react-router';
 import { type FormEvent, useState } from 'react';
 import { useAuthStore } from '~/features/auth/auth.store';
 
 export default function LoginForm() {
   const navigate = useNavigate();
-  const [hover, setHover] = useState(false);
   const { login, isLoading } = useAuthStore();
 
   const [email, setEmail] = useState('');
@@ -12,19 +13,28 @@ export default function LoginForm() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     try {
       await login({ email, password });
-      navigate('/rooms/');
-    } catch (err) {
+      navigate('/');
+    } catch (err: any) {
+      if (err.issues) {
+        toast.error(err.issues[0].message);
+      } else if (err.response?.data?.errors) {
+        for (const code of Object.values(err.response.data.errors) as string[]) {
+          toast.error(ERROR_MESSAGES[code] ?? code);
+        }
+      } else {
+        toast.error('failed to login');
+      }
       console.log('Login failed', err);
     }
   }
 
   return (
-    <form className='form' onSubmit={handleSubmit}>
+    <form className='box' onSubmit={handleSubmit}>
       <input
         type="email"
+        className='box'
         placeholder="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
@@ -32,6 +42,7 @@ export default function LoginForm() {
 
       <input
         type="password"
+        className='box'
         placeholder="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
@@ -39,14 +50,8 @@ export default function LoginForm() {
 
       <button
         type="submit"
+        className='box'
         disabled={isLoading}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        style={{
-          opacity: isLoading ? 0.5 : 1,
-          backgroundColor: hover ? 'white' : 'black',
-          color: hover ? 'black' : 'white',
-        }}
       >
         {isLoading ? 'Loading...' : 'login'}
       </button>
@@ -60,5 +65,3 @@ export default function LoginForm() {
     </form>
   );
 }
-
-

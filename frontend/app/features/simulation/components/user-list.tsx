@@ -3,13 +3,13 @@ import { useState } from "react";
 import UserBadge from "./user-badge";
 
 export default function UserList() {
-	const [ hover, setHover ] = useState(false);
-	const [ open, setOpen ] = useState(false);
+	const [hover, setHover] = useState(false);
+	const [open, setOpen] = useState(false);
 
 	const { isLoading } = useAuthStore();
-	
+
 	return <>
-		{ open && <>
+		{open && <>
 			<div
 				style={{
 					position: "fixed",
@@ -20,9 +20,9 @@ export default function UserList() {
 					width: 424,
 
 					overflow: "hidden scroll",
-					border: "2px solid white",
+					border: "1px solid white",
 					backgroundColor: "black",
-				
+
 					opacity: isLoading ? 0.5 : 1
 				}}
 			>
@@ -57,10 +57,10 @@ export default function UserList() {
 					height: 32,
 
 					overflow: "hidden",
-					border: "2px solid white",
+					border: "1px solid white",
 					backgroundColor: hover ? "white" : "black",
 					color: hover ? "black" : "white",
-				
+
 					opacity: isLoading ? 0.5 : 1,
 
 					justifyContent: "center",
@@ -70,9 +70,9 @@ export default function UserList() {
 			>
 				{">"}
 			</div>
-		</> }
+		</>}
 
-		{ !open && 
+		{!open &&
 			<div
 				onMouseEnter={() => setHover(true)}
 				onMouseLeave={() => setHover(false)}
@@ -87,10 +87,10 @@ export default function UserList() {
 					height: 32,
 
 					overflow: "hidden",
-					border: "2px solid white",
+					border: "1px solid white",
 					backgroundColor: hover ? "white" : "black",
 					color: hover ? "black" : "white",
-				
+
 					opacity: isLoading ? 0.5 : 1,
 
 					justifyContent: "center",
