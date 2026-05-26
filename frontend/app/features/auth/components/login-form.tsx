@@ -15,7 +15,7 @@ export default function LoginForm() {
 
     try {
       await login({ email, password });
-      navigate('/');
+      navigate('/rooms/');
     } catch (err) {
       console.log('Login failed', err);
     }
