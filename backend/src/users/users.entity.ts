@@ -7,6 +7,8 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
 } from 'typeorm';
+import { UserIcon } from './users.enums';
+
 import {Membership} from '../rooms/membership.entity';
 @Entity({
   name: 'user',
@@ -36,6 +38,9 @@ export class UserEntity {
   @Column({ default: '#ffffff' })
   color: string;
 
+  @Column({ default: UserIcon.CIRCLE })
+  icon: UserIcon;
+  
   @DeleteDateColumn()
   deletedAt!: Date;
   

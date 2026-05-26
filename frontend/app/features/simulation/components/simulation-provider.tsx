@@ -1,8 +1,9 @@
 import { createContext, useContext, useState, type ReactNode, type MutableRefObject } from "react";
 import { useSim } from "../use-sim";
-import { Events, type SimStateSchema, type BodyResponseSchema } from "../sim.schema";
+import { Events, type SimStateSchema, type BodyResponseSchema, UserIcon } from "../sim.schema";
 import { SocketStatus } from "~/lib/use-socket";
 import type { Socket } from "socket.io-client";
+import { useEffect } from 'react';
 
 const WIDTH = 12;
 const HEIGHT = 8;
@@ -13,12 +14,15 @@ type SimulationContextType = {
   socket: MutableRefObject<Socket | null>;
   simState: SimStateSchema;
   colors: Map<string, string>;
+  icons: Map<string, UserIcon>;
   isJoined: boolean;
   currentRoom: string;
   setCurrentRoom: (v: string) => void;
   handleJoin: () => void;
   handleLeave: () => void;
   handleCreate: () => void;
+  bodyCount: number;
+  setBodyCount: (v: number) => void;
 };
 
 const SimulationContext = createContext<SimulationContextType>({
@@ -31,18 +35,22 @@ const SimulationContext = createContext<SimulationContextType>({
     bodies: new Map<string, BodyResponseSchema>(),
   },
   colors: new Map(),
+  icons: new Map(),
   isJoined: false,
   currentRoom: '',
   setCurrentRoom: () => { },
   handleJoin: () => { },
   handleLeave: () => { },
   handleCreate: () => { },
+  bodyCount: 0,
+  setBodyCount: () => { },
 });
 
 export function SimulationProvider({ children }: { children: ReactNode }) {
   const [isJoined, setIsJoined] = useState(false);
   const [currentRoom, setCurrentRoom] = useState('');
-  const { status, socket, simState, colors } = useSim({ url: "http://localhost:3000" });
+  const [bodyCount, setBodyCount] = useState(0);
+  const { status, socket, simState, colors, icons } = useSim({ url: "http://localhost:3000" });
 
   function handleJoin() {
     if (!socket.current) {
@@ -63,6 +71,18 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     window.location.reload();
   }
 
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (isJoined && socket.current) {
+        socket.current.emit(Events.ROOM_LEAVE, { id: currentRoom });
+        setIsJoined(false);
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isJoined, currentRoom, socket]);
+
   function handleCreate() {
     if (!socket.current) {
       return;
@@ -80,13 +100,15 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
         velocity: { x: 0.01, y: 0.01 }
       }
     });
+    setBodyCount((prev) => prev + 1);
   }
 
   return (
     <SimulationContext.Provider value={{
-      status, socket, simState, colors,
+      status, socket, simState, colors, icons,
       isJoined, currentRoom, setCurrentRoom,
       handleJoin, handleLeave, handleCreate,
+      bodyCount, setBodyCount
     }}>
       {children}
     </SimulationContext.Provider>

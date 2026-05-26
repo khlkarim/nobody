@@ -10,7 +10,7 @@ export default function GUI() {
   const [hoverAddBody, setHoverAddBody] = useState(false);
 
   const { isLoading } = useAuthStore();
-  const { handleLeave, handleCreate } = useSimulationContext();
+  const { handleLeave, handleCreate, bodyCount } = useSimulationContext();
 
   return (
     <>
@@ -87,12 +87,12 @@ export default function GUI() {
           display: "flex",
         }}
       >
-        {isLoading ? 'Loading...' : '16'}
+        {isLoading ? 'Loading...' : bodyCount.toString()}
       </div>
 
       <UserList />
 
-      {/* <NotificationList /> */}
+      <NotificationList />
     </>
   );
 }

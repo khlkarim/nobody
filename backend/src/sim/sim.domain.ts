@@ -1,3 +1,4 @@
+import { UserIcon } from "src/users/users.enums";
 import { SimLoop } from "./sim.loop";
 
 export enum Events {
@@ -34,6 +35,7 @@ export interface SimState {
 export interface Client {
   id: string;
   color: string;
+  icon: UserIcon;
 }
 
 export interface Room {

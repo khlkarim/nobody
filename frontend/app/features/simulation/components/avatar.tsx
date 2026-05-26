@@ -1,7 +1,23 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { useSimulationContext } from './simulation-provider';
+import { Events } from '../sim.schema';
 
 export default function Avatar() {
+  const navigate = useNavigate();
+  
   const [hover, setHover] = useState(false);
+  const { socket, currentRoom } = useSimulationContext();
+
+  const handleClick = () => {
+    if (!socket.current) {
+      return;
+    }
+
+    socket.current.emit(Events.ROOM_LEAVE, { id: currentRoom });
+
+    navigate("/user");
+  }
 
   return (
     <div
@@ -26,6 +42,7 @@ export default function Avatar() {
           transition: "0.2s",
           position: "relative",
         }}
+        onClick={handleClick}
       >
         <img
           src="/avatar.png"

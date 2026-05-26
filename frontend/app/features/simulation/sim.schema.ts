@@ -10,6 +10,17 @@ export enum Events {
   SIM_STATE_DELETE_BODY = 'sim.state.remove.body',
 }
 
+export enum UserIcon {
+  CIRCLE = 'circle',
+  CLIENT = 'client',
+  CUBE = 'cube',
+  OCTAGON = 'octagon',
+  SERVER = 'server',
+  SQUARE = 'square',
+  STAR = 'star',
+  SUN = 'sun',
+}
+
 export const vec2Schema = z.object({
   x: z.number(),
   y: z.number(),
