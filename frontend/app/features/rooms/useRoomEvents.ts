@@ -1,20 +1,16 @@
 import { useEffect } from 'react';
 import { useRoomsStore } from './rooms.store';
-import type { Room } from './rooms.schema';
 
 export function useRoomEvents() {
-    const addRoom = useRoomsStore((s) => s.addRoom);
+    const getRooms = useRoomsStore((s) => s.getRooms);
 
     useEffect(() => {
-        const es = new EventSource('/rooms/events', { withCredentials: true });
+        const es = new EventSource('http://localhost:3000/rooms/events', {
+            withCredentials: true,
+        });
 
-        es.addEventListener('room-created', (e: MessageEvent) => {
-            try {
-                const room: Room = JSON.parse(e.data);
-                addRoom(room);
-            } catch {
-                console.error('Failed to parse room-created event', e.data);
-            }
+        es.addEventListener('rooms-changed', () => {
+            getRooms();
         });
 
         es.onerror = () => {
@@ -22,5 +18,5 @@ export function useRoomEvents() {
         };
 
         return () => es.close();
-    }, [addRoom]);
+    }, [getRooms]);
 }

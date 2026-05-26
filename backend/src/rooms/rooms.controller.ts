@@ -9,17 +9,18 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  Sse
 } from '@nestjs/common';
 
 import { RoomsService } from './rooms.service';
 
 import { UpdateRoomDto } from './dto/updateroomdto';
-import { CreateRoomDto, JoinRoomDto} from './dto/createroomdto';
+import { CreateRoomDto, JoinRoomDto } from './dto/createroomdto';
 
 
 @Controller('rooms')
 export class RoomsController {
-  constructor(private readonly service: RoomsService) {}
+  constructor(private readonly service: RoomsService) { }
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -68,5 +69,10 @@ export class RoomsController {
     @Param('userId') userId: string,
   ) {
     return this.service.kickUser(roomId, userId);
+  }
+
+  @Sse('events')
+  stream() {
+    return this.service.getStream();
   }
 }

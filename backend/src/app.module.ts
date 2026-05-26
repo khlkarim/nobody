@@ -3,6 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { GraphQLModule } from '@nestjs/graphql';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+
 
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
@@ -19,6 +21,8 @@ import { RoomsModule } from "./rooms/rooms.module";
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
+
     ConfigModule.forRoot({
       isGlobal: true,
       load: [databaseConfig, authConfig],
