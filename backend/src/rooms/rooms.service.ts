@@ -9,9 +9,9 @@ export class RoomsService {
   constructor(
     @InjectRepository(Room) private roomRepo: Repository<Room>,
     @InjectRepository(Membership) private memRepo: Repository<Membership>,
-  ) {}
+  ) { }
 
-  private async findRoom(id: string): Promise<Room> {
+  async findRoom(id: string): Promise<Room> {
     const room = await this.roomRepo.findOne({
       where: { id },
       relations: { creator: true, memberships: true },

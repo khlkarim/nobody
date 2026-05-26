@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
+import { GraphQLModule } from '@nestjs/graphql';
 
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
@@ -13,13 +15,19 @@ import { UserEntity } from './users/users.entity';
 import { AllConfigType } from './config/config.type';
 import { Room } from './rooms/room.entity';
 import { Membership } from './rooms/membership.entity';
-import {RoomsModule} from "./rooms/rooms.module";
+import { RoomsModule } from "./rooms/rooms.module";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       load: [databaseConfig, authConfig],
+    }),
+
+    GraphQLModule.forRoot<YogaDriverConfig>({
+      driver: YogaDriver,
+      autoSchemaFile: true,
+      context: ({ req }) => ({ req }),
     }),
 
     TypeOrmModule.forRootAsync({
