@@ -11,12 +11,12 @@ type UserProfileProps = {
 export function UserProfile({ user }: UserProfileProps) {
   const navigate = useNavigate();
   const { logout } = useAuthStore();
-  
+
   const fullName = `${user.firstName} ${user.lastName}`;
 
-  const [ editHover, setEditHover ] = useState(false);
-  const [ deleteHover, setDeleteHover ] = useState(false);
-  const [ leaveHover, setLeaveHover ] = useState(false);
+  const [editHover, setEditHover] = useState(false);
+  const [deleteHover, setDeleteHover] = useState(false);
+  const [leaveHover, setLeaveHover] = useState(false);
 
   const handleEditClick = () => {
     navigate(`/user/edit`);
@@ -34,7 +34,7 @@ export function UserProfile({ user }: UserProfileProps) {
           console.error("Error deleting profile:", err);
           alert("an error occurred while deleting your profile. please try again later.");
         }
-      );
+        );
     }
   };
 
@@ -67,7 +67,7 @@ export function UserProfile({ user }: UserProfileProps) {
         <div>user profile</div>
 
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate(-1)}
 
           onMouseEnter={() => setLeaveHover(true)}
           onMouseLeave={() => setLeaveHover(false)}
@@ -136,7 +136,7 @@ export function UserProfile({ user }: UserProfileProps) {
             </div>
           </div>
         </div>
-        
+
         <button
           onMouseEnter={() => setEditHover(true)}
           onMouseLeave={() => setEditHover(false)}
@@ -151,16 +151,16 @@ export function UserProfile({ user }: UserProfileProps) {
             border: "2px solid white",
             cursor: "pointer",
           }}
-          
+
           onClick={handleEditClick}
         >
           edit profile
         </button>
-        
+
         <button
           onMouseEnter={() => setDeleteHover(true)}
           onMouseLeave={() => setDeleteHover(false)}
-          
+
           style={{
             padding: "8px 16px",
 
@@ -170,7 +170,7 @@ export function UserProfile({ user }: UserProfileProps) {
             border: "2px solid white",
             cursor: "pointer",
           }}
-          
+
           onClick={handleDeleteClick}
         >
           delete profile
