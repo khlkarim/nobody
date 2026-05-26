@@ -14,22 +14,50 @@ body {
   }
 }
 
-.form {
+div.box {
+  color: white;
+  background: black;
+  border: 1px solid white;
+  padding: 8px 16px;
+}
+
+form.box {
   gap: 8px;
   width: 400px;
   display: flex;
   flex-direction: column;
 }
 
-.form input {
+input.box {
   color: white;
   padding: 6px 10px;
   backgroundColor: black;
   border: 1px solid white;
 }
 
-.form button {
+button.box {
   cursor: pointer;
   padding: 6px 10px;
   border: 1px solid white;
+  color: white;
+  background: black;
+}
+
+button.box:hover{
+  color: black;
+  background: white;
+}
+
+.navcontainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar {
+  width: 30%;
+  display: flex;
+  justify-content: space-around;
+  border: 1px solid white;
+  padding: 8px 0px;
 }

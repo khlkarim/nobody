@@ -17,7 +17,7 @@ export function CreateRoomModal({ onClose }: Props) {
 
     async function handleCreate() {
         if (!name.trim() || !user) return;
-        
+
         setCreating(true);
         setError('');
         try {
@@ -33,13 +33,11 @@ export function CreateRoomModal({ onClose }: Props) {
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal" onClick={(e) => e.stopPropagation()}>
-                <h2 className="modal__title">Create New Room</h2>
-
                 <label className="modal__label">
-                    Room Name
+                    room name
                     <input
                         className="modal__input"
-                        placeholder="e.g. Solar System"
+                        placeholder="e.g. solar system"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         autoFocus
@@ -47,10 +45,10 @@ export function CreateRoomModal({ onClose }: Props) {
                 </label>
 
                 <label className="modal__label">
-                    Description
+                    description
                     <textarea
                         className="modal__input modal__textarea"
-                        placeholder="What's this simulation about?"
+                        placeholder="what's this simulation about?"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         rows={3}
@@ -60,15 +58,15 @@ export function CreateRoomModal({ onClose }: Props) {
                 {error && <p className="modal__error">{error}</p>}
 
                 <div className="modal__actions">
-                    <button className="modal__btn" onClick={onClose}>
-                        Cancel
+                    <button className="box" onClick={onClose}>
+                        cancel
                     </button>
                     <button
-                        className="modal__btn modal__btn--primary"
+                        className="box"
                         onClick={handleCreate}
                         disabled={creating || !name.trim() || !user}
                     >
-                        {creating ? 'Creating…' : 'Create Room'}
+                        {creating ? 'Creating…' : 'create'}
                     </button>
                 </div>
             </div>

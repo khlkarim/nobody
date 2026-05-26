@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useAuthStore } from '~/features/auth/auth.store';
-import { useRoomsStore } from '../rooms.store';
 import type { Room } from '../rooms.api';
+import { useNavigate } from 'react-router';
 import { EditRoomModal } from './edit-room-modal';
+import { useAuthStore } from '~/features/auth/auth.store';
 
 interface Props {
     room: Room;
@@ -10,21 +10,15 @@ interface Props {
 
 export function RoomCard({ room }: Props) {
     const { user } = useAuthStore();
-    const { joinRoom } = useRoomsStore();
-    const [joining, setJoining] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
 
-    const isCreator = user?.id === room.creator.id;
+    const navigate = useNavigate();
     const memberCount = room.memberships.length;
+    const isCreator = user?.id === room.creator.id;
     const formattedDate = new Date(room.createdAt).toISOString().slice(0, 10).replace(/-/g, '.');
 
     async function handleJoin() {
-        setJoining(true);
-        try {
-            await joinRoom(room.id);
-        } finally {
-            setJoining(false);
-        }
+        navigate('/simulation?room=' + room.name);
     }
 
     return (
@@ -32,20 +26,18 @@ export function RoomCard({ room }: Props) {
             <div className="room-card">
                 <div className="room-card__header">
                     <div className="room-card__meta">
-                        <span className="room-card__name">{room.name}</span>
+                        <div className="box">{room.name}</div>
 
-                        <div className="room-card__bubble">
-                            <span className="room-card__count">
-                                {memberCount >= 1000
-                                    ? `${(memberCount / 1000).toFixed(0)}k`
-                                    : memberCount}
-                            </span>
+                        <div className="box">
+                            {memberCount >= 1000
+                                ? `${(memberCount / 1000).toFixed(0)}k`
+                                : memberCount}
                         </div>
 
                         {isCreator && (
                             <>
-                                <span className="room-card__tag">{formattedDate}</span>
-                                <span className="room-card__tag">creator</span>
+                                <div className='box'>{formattedDate}</div>
+                                <div className='box'>creator</div>
                             </>
                         )}
                     </div>
@@ -53,24 +45,23 @@ export function RoomCard({ room }: Props) {
                     <div className="room-card__actions">
                         {isCreator && (
                             <button
-                                className="room-card__btn"
+                                className="box"
                                 onClick={() => setEditOpen(true)}
                             >
-                                Edit
+                                edit
                             </button>
                         )}
                         <button
-                            className="room-card__btn room-card__btn--join"
+                            className="box"
                             onClick={handleJoin}
-                            disabled={joining}
                         >
-                            {joining ? '...' : 'Join'}
+                            join
                         </button>
                     </div>
                 </div>
 
                 {room.description && (
-                    <div className="room-card__description">{room.description}</div>
+                    <div>{room.description}</div>
                 )}
             </div>
 

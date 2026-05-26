@@ -20,13 +20,13 @@ export default function UserBadge({
         margin: 4,
         marginBottom: 8,
 
-        border: "2px solid white",
+        border: "1px solid white",
 
         color: "white",
         backgroundColor: "black",
       }}
     >
-      <img
+      {/*<img
         src={image}
         alt={username}
         style={{
@@ -35,10 +35,10 @@ export default function UserBadge({
           borderRadius: "50%",
           objectFit: "cover",
         }}
-      />
+      />*/}
 
       <div>
-        <div style={{ fontWeight: "bold" }}>{username}</div>
+        <div>{username}</div>
         <div style={{ fontSize: 12, opacity: 0.7 }}>
           {bodycount} bodies
         </div>

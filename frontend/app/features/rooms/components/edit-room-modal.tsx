@@ -38,10 +38,8 @@ export function EditRoomModal({ room, onClose }: Props) {
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal" onClick={(e) => e.stopPropagation()}>
-                <h2 className="modal__title">Edit Room</h2>
-
                 <label className="modal__label">
-                    Name
+                    name
                     <input
                         className="modal__input"
                         value={name}
@@ -50,7 +48,7 @@ export function EditRoomModal({ room, onClose }: Props) {
                 </label>
 
                 <label className="modal__label">
-                    Description
+                    description
                     <textarea
                         className="modal__input modal__textarea"
                         value={description}
@@ -59,26 +57,28 @@ export function EditRoomModal({ room, onClose }: Props) {
                     />
                 </label>
 
-                <div className="modal__actions">
+                <div className="modal__actions" style={{ justifyContent: 'space-between', }}>
                     <button
-                        className="modal__btn modal__btn--danger"
+                        className="box"
                         onClick={handleDelete}
                         disabled={deleting || saving}
                     >
-                        {deleting ? 'Deleting…' : 'Delete Room'}
+                        {deleting ? 'Deleting…' : 'delete'}
                     </button>
 
-                    <button className="modal__btn" onClick={onClose}>
-                        Cancel
-                    </button>
+                    <div style={{ display: "flex", gap: 8 }}>
+                        <button className="box" onClick={onClose}>
+                            cancel
+                        </button>
 
-                    <button
-                        className="modal__btn modal__btn--primary"
-                        onClick={handleSave}
-                        disabled={saving || deleting || !name.trim()}
-                    >
-                        {saving ? 'Saving…' : 'Save'}
-                    </button>
+                        <button
+                            className="box"
+                            onClick={handleSave}
+                            disabled={saving || deleting || !name.trim()}
+                        >
+                            {saving ? 'Saving…' : 'save'}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

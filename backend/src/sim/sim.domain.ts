@@ -34,6 +34,7 @@ export interface SimState {
 
 export interface Client {
   id: string;
+  userId: string;
   color: string;
   icon: UserIcon;
 }

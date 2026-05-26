@@ -7,6 +7,8 @@ import {
   ScrollRestoration,
 } from "react-router";
 
+import { Toaster } from 'react-hot-toast';
+
 import { useEffect } from "react";
 import { useAuthStore } from "~/features/auth/auth.store";
 
@@ -37,6 +39,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <Toaster
+          position="bottom-right"
+        >
+          {(t) => (
+            <div
+              className="box"
+              style={{
+                paddingTop: 8,
+                paddingBottom: 8,
+                paddingLeft: 16,
+                paddingRight: 16,
+              }}
+            >
+              {t.message?.toString()}
+            </div>
+          )}
+        </Toaster>
         {children}
         <ScrollRestoration />
         <Scripts />

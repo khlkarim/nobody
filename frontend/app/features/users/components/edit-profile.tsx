@@ -49,7 +49,7 @@ export function EditProfile({ user }: UserProfileProps) {
         gap: 16,
         padding: 20,
         margin: 4,
-        border: "2px solid white",
+        border: "1px solid white",
         color: "white",
         backgroundColor: "black",
         maxWidth: 400,
@@ -58,9 +58,8 @@ export function EditProfile({ user }: UserProfileProps) {
     >
       <div
         style={{
-          fontWeight: "bold",
           fontSize: 20,
-          borderBottom: "2px solid #fff",
+          borderBottom: "1px solid #fff",
           paddingBottom: 10,
         }}
       >
@@ -241,36 +240,19 @@ export function EditProfile({ user }: UserProfileProps) {
         </div>
 
         <button
+          className="box"
+          onClick={handleSubmitClick}
           onMouseEnter={() => setSubmitHover(true)}
           onMouseLeave={() => setSubmitHover(false)}
-
-          style={{
-            marginTop: 12,
-            padding: "8px 16px",
-            backgroundColor: submitHover ? "white" : "black",
-            color: submitHover ? "black" : "white",
-            border: "2px solid white",
-            cursor: "pointer",
-          }}
-          
-          onClick={handleSubmitClick}
         >
           done
         </button>
 
         <button
+          className="box"
+          onClick={handleCancelClick}
           onMouseEnter={() => setCancelHover(true)}
           onMouseLeave={() => setCancelHover(false)}
-
-          style={{
-            padding: "8px 16px",
-            backgroundColor: cancelHover ? "white" : "black",
-            color: cancelHover ? "black" : "red",
-            border: "2px solid white",
-            cursor: "pointer",
-          }}
-          
-          onClick={handleCancelClick}
         >
           cancel
         </button>

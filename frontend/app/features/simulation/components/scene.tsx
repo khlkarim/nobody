@@ -4,7 +4,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
 import { broadcast, update } from "../sim.utils";
 import { useSimulationContext } from "./simulation-provider";
-import { useAuthStore } from "~/features/auth/auth.store";
 
 const svgLoader = new SVGLoader();
 
@@ -165,8 +164,7 @@ export default function Scene() {
 
     if (socket.current && isJoined) {
       const all = [...simState.bodies.values()];
-      const userId = useAuthStore.getState().user?.id;
-      const mine = all.filter(b => b.owner === userId);
+      const mine = all.filter(b => b.owner === socket.current?.id);
       const updated = update(simState.deltatime, CONTAINER, mine, all);
       broadcast(socket.current, currentRoom, updated);
     }

@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { useAuthStore } from '~/features/auth/auth.store';
-import { useSimulationContext } from './simulation-provider';
 import Avatar from './avatar';
+import { useState } from 'react';
 import UserList from './user-list';
 import NotificationList from './notification-list';
+import { useAuthStore } from '~/features/auth/auth.store';
+import { useSimulationContext } from './simulation-provider';
 
 export default function GUI() {
   const [hoverLeave, setHoverLeave] = useState(false);
@@ -31,11 +31,11 @@ export default function GUI() {
           height: 40,
 
           overflow: "hidden",
-          border: "2px solid white",
+          border: "1px solid white",
 
           opacity: isLoading ? 0.5 : 1,
           backgroundColor: hoverLeave ? 'white' : 'black',
-          color: hoverLeave ? 'red' : 'white',
+          color: hoverLeave ? 'black' : 'white',
         }}
       >
         {isLoading ? 'Loading...' : 'leave'}
@@ -56,11 +56,11 @@ export default function GUI() {
           height: 40,
 
           overflow: "hidden",
-          border: "2px solid white",
+          border: "1px solid white",
 
           opacity: isLoading ? 0.5 : 1,
           backgroundColor: hoverAddBody ? 'white' : 'black',
-          color: hoverAddBody ? 'green' : 'white',
+          color: hoverAddBody ? 'black' : 'white',
         }}
       >
         {isLoading ? 'Loading...' : 'add body'}

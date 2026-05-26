@@ -1,10 +1,11 @@
+import { toast } from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router';
 import { type FormEvent, useState } from 'react';
 import { useAuthStore } from '~/features/auth/auth.store';
+import { ERROR_MESSAGES } from '../auth.schema';
 
 export default function RegisterForm() {
   const navigate = useNavigate();
-  const [hover, setHover] = useState(false);
   const { register, isLoading } = useAuthStore();
 
   const [email, setEmail] = useState('');
@@ -24,15 +25,25 @@ export default function RegisterForm() {
       });
 
       navigate('/auth/login');
-    } catch (err) {
-      console.error('Register failed', err);
+    } catch (err: any) {
+      if (err.issues) {
+        toast.error(err.issues[0].message);
+      } else if (err.response?.data?.errors) {
+        for (const code of Object.values(err.response.data.errors) as string[]) {
+          toast.error(ERROR_MESSAGES[code] ?? code);
+        }
+      } else {
+        toast.error('failed to register');
+      }
+      console.log('Failed to register', err);
     }
   }
 
   return (
-    <form className='form' onSubmit={handleSubmit}>
+    <form className='box' onSubmit={handleSubmit}>
       <input
         type="text"
+        className='box'
         placeholder="first name"
         value={firstName}
         onChange={(e) => setFirstName(e.target.value)}
@@ -40,6 +51,7 @@ export default function RegisterForm() {
 
       <input
         type="text"
+        className='box'
         placeholder="last name"
         value={lastName}
         onChange={(e) => setLastName(e.target.value)}
@@ -47,6 +59,7 @@ export default function RegisterForm() {
 
       <input
         type="email"
+        className='box'
         placeholder="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
@@ -54,6 +67,7 @@ export default function RegisterForm() {
 
       <input
         type="password"
+        className='box'
         placeholder="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
@@ -61,14 +75,8 @@ export default function RegisterForm() {
 
       <button
         type="submit"
+        className='box'
         disabled={isLoading}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        style={{
-          opacity: isLoading ? 0.5 : 1,
-          backgroundColor: hover ? 'white' : 'black',
-          color: hover ? 'black' : 'white',
-        }}
       >
         {isLoading ? 'Loading...' : 'register'}
       </button>

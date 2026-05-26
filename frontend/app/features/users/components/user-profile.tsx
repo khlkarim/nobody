@@ -11,12 +11,12 @@ type UserProfileProps = {
 export function UserProfile({ user }: UserProfileProps) {
   const navigate = useNavigate();
   const { logout } = useAuthStore();
-  
+
   const fullName = `${user.firstName} ${user.lastName}`;
 
-  const [ editHover, setEditHover ] = useState(false);
-  const [ deleteHover, setDeleteHover ] = useState(false);
-  const [ leaveHover, setLeaveHover ] = useState(false);
+  const [editHover, setEditHover] = useState(false);
+  const [deleteHover, setDeleteHover] = useState(false);
+  const [leaveHover, setLeaveHover] = useState(false);
 
   const handleEditClick = () => {
     navigate(`/user/edit`);
@@ -34,7 +34,7 @@ export function UserProfile({ user }: UserProfileProps) {
           console.error("Error deleting profile:", err);
           alert("an error occurred while deleting your profile. please try again later.");
         }
-      );
+        );
     }
   };
 
@@ -46,7 +46,7 @@ export function UserProfile({ user }: UserProfileProps) {
         gap: 16,
         padding: 20,
         margin: 4,
-        border: "2px solid white",
+        border: "1px solid white",
         color: "white",
         backgroundColor: "black",
         width: 400,
@@ -58,9 +58,8 @@ export function UserProfile({ user }: UserProfileProps) {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          fontWeight: "bold",
           fontSize: 20,
-          borderBottom: "2px solid #fff",
+          borderBottom: "1px solid #fff",
           paddingBottom: 10,
         }}
       >
@@ -95,7 +94,7 @@ export function UserProfile({ user }: UserProfileProps) {
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         <div>
           <div style={{ opacity: 0.7, fontSize: 12, textTransform: "lowercase" }}>Name</div>
-          <div style={{ fontSize: 18, fontWeight: "bold" }}>{fullName}</div>
+          <div style={{ fontSize: 18 }}>{fullName}</div>
         </div>
 
         <div>
@@ -136,45 +135,20 @@ export function UserProfile({ user }: UserProfileProps) {
             </div>
           </div>
         </div>
-        
+
         <button
-          onMouseEnter={() => setEditHover(true)}
-          onMouseLeave={() => setEditHover(false)}
-
-          style={{
-            marginTop: 12,
-            padding: "8px 16px",
-
-            backgroundColor: editHover ? "white" : "black",
-            color: editHover ? "black" : "white",
-
-            border: "2px solid white",
-            cursor: "pointer",
-          }}
-          
+          className="box"
           onClick={handleEditClick}
         >
           edit profile
         </button>
-        
-        <button
-          onMouseEnter={() => setDeleteHover(true)}
-          onMouseLeave={() => setDeleteHover(false)}
-          
-          style={{
-            padding: "8px 16px",
 
-            backgroundColor: deleteHover ? "white" : "black",
-            color: deleteHover ? "black" : "red",
-
-            border: "2px solid white",
-            cursor: "pointer",
-          }}
-          
+        {/*<button
+          className="box"
           onClick={handleDeleteClick}
         >
           delete profile
-        </button>
+        </button>*/}
       </div>
     </div>
   );

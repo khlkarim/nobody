@@ -1,108 +1,104 @@
+import { Subject } from 'rxjs';
 import { BodyDto } from './sim.dto';
 import { SimLoop } from './sim.loop';
 import { Injectable } from '@nestjs/common';
-import { Client, SimState, Room } from './sim.domain';
-import { Subject } from 'rxjs';
 import { UserIcon } from 'src/users/users.enums';
+import { Client, SimState, Room } from './sim.domain';
 
 @Injectable()
 export class SimService {
+  private streams = new Map<string, Subject<any>>();
   private rooms: Map<string, Room> = new Map<string, Room>();
   private clients: Map<string, Client> = new Map<string, Client>();
-  private streams = new Map<string, Subject<any>>();
-
-  // Maps userId to socketId for duplicate session detection
-  private userSockets: Map<string, string> = new Map<string, string>();
+  private userSockets: Map<string, Set<string>> = new Map<string, Set<string>>();
 
   registerClient(userId: string, socketId: string, color: string, icon: UserIcon) {
-    this.userSockets.set(userId, socketId);
+    this.clients.set(socketId, { id: socketId, userId, color, icon });
 
-    if (!this.clients.has(userId)) {
-      this.clients.set(userId, { id: userId, color, icon });
-    } else {
-      const client = this.clients.get(userId);
-      if (client) {
-        client.color = color;
-        client.icon = icon;
-      }
+    if (!this.userSockets.has(userId)) {
+      this.userSockets.set(userId, new Set<string>());
     }
+    this.userSockets.get(userId)!.add(socketId);
   }
 
-  getClient(userId: string): Client | undefined {
-    return this.clients.get(userId);
+  getClient(socketId: string): Client | undefined {
+    return this.clients.get(socketId);
   }
 
-  getSocketIdByUserId(userId: string): string | null {
-    return this.userSockets.get(userId) || null;
+  getSocketIdsByUserId(userId: string): Set<string> {
+    return this.userSockets.get(userId) ?? new Set();
   }
 
-  join(userId: string, roomId: string, broadcast: (gameState: SimState) => void) {
+  join(socketId: string, roomId: string, broadcast: (gameState: SimState) => void) {
     let room = this.rooms.get(roomId);
-
     if (!room) {
       room = {
         id: roomId,
         members: new Set<string>(),
         simLoop: new SimLoop(broadcast),
       };
-
       room.simLoop.start();
-
       this.rooms.set(roomId, room);
       console.log(`Room created: "${roomId}"`);
     }
-
-    room.members.add(userId);
+    room.members.add(socketId);
     return room;
   }
 
-  leave(userId: string, roomId: string) {
-    const room = this.rooms.get(roomId);
-
-    if (room) {
-      room.simLoop.deleteBodiesByOwner(userId);
-      room.members.delete(userId);
-
-      if (room.members.size === 0) {
-        room.simLoop.stop();
-        this.rooms.delete(roomId);
-        console.log(`Room deleted (empty): "${roomId}"`);
-      }
-    }
-  }
-
-  createBody(roomId: string, userId: string, bodyDto: BodyDto) {
+  leave(socketId: string, roomId: string) {
     const room = this.rooms.get(roomId);
     if (!room) return;
 
-    room.simLoop.createBody(userId, bodyDto);
+    room.simLoop.deleteBodiesByOwner(socketId);
+    room.members.delete(socketId);
+
+    if (room.members.size === 0) {
+      room.simLoop.stop();
+      this.rooms.delete(roomId);
+      console.log(`Room deleted (empty): "${roomId}"`);
+    }
+  }
+
+  createBody(roomId: string, socketId: string, bodyDto: BodyDto) {
+    const room = this.rooms.get(roomId);
+    if (!room) return;
+    room.simLoop.createBody(socketId, bodyDto);
   }
 
   updateBody(roomId: string, bodyId: string, bodyDto: BodyDto) {
     const room = this.rooms.get(roomId);
     if (!room) return;
-
     room.simLoop.updateBody(bodyId, bodyDto);
   }
 
   deleteBody(roomId: string, bodyId: string) {
     const room = this.rooms.get(roomId);
     if (!room) return;
-
     room.simLoop.deleteBody(bodyId);
   }
 
-  remove(userId: string) {
-    this.userSockets.delete(userId);
-
-    const client = this.clients.get(userId);
+  remove(socketId: string) {
+    const client = this.clients.get(socketId);
     if (!client) return;
 
+    const { userId } = client;
+
     for (const room of this.rooms.values()) {
-      this.leave(userId, room.id);
+      if (room.members.has(socketId)) {
+        this.leave(socketId, room.id);
+      }
     }
 
-    this.clients.delete(userId);
+    const sockets = this.userSockets.get(userId);
+    if (sockets) {
+      sockets.delete(socketId);
+      if (sockets.size === 0) {
+        this.userSockets.delete(userId);
+      }
+    }
+
+    this.clients.delete(socketId);
+    console.log(`Client removed: socket "${socketId}" (user: "${userId}")`);
   }
 
   private getOrCreate(roomId: string) {

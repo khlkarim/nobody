@@ -5,7 +5,7 @@ import { Events } from '../sim.schema';
 
 export default function Avatar() {
   const navigate = useNavigate();
-  
+
   const [hover, setHover] = useState(false);
   const { socket, currentRoom } = useSimulationContext();
 
@@ -41,6 +41,7 @@ export default function Avatar() {
           transform: hover ? "scale(1.1)" : "scale(1)",
           transition: "0.2s",
           position: "relative",
+          cursor: "pointer",
         }}
         onClick={handleClick}
       >
@@ -60,13 +61,13 @@ export default function Avatar() {
           style={{
             position: "absolute",
             top: 54,
-						right: -8,
+            right: -8,
 
             backgroundColor: "black",
             color: "white",
             padding: "4px 8px",
             borderRadius: 4,
-						
+
             whiteSpace: "nowrap",
             fontSize: 12,
           }}
