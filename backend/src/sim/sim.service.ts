@@ -4,6 +4,7 @@ import { SimLoop } from './sim.loop';
 import { Injectable } from '@nestjs/common';
 import { UserIcon } from 'src/users/users.enums';
 import { Client, SimState, Room } from './sim.domain';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class SimService {
@@ -11,6 +12,37 @@ export class SimService {
   private rooms: Map<string, Room> = new Map<string, Room>();
   private clients: Map<string, Client> = new Map<string, Client>();
   private userSockets: Map<string, Set<string>> = new Map<string, Set<string>>();
+
+  constructor(private usersService: UsersService) { }
+
+  async getSocketIdsByUserIdArray(userId: string) {
+    const socketIds = this.userSockets.get(userId);
+    if (!socketIds) {
+      return [];
+    }
+
+    return socketIds;
+  }
+
+  async getUsersByRoom(roomId: string) {
+    const room = this.rooms.get(roomId);
+    if (!room) return [];
+    console.log("room exists: ", room);
+
+    const clientIds = [...this.userSockets.entries()]
+      .filter(([, socketIds]) => [...socketIds].some(id => room.members.has(id)))
+      .map(([userId]) => userId);
+    console.log(clientIds);
+
+    const users = await Promise.all(
+      clientIds.map(async cId => {
+        return await this.usersService.findById(cId);
+      })
+    );
+    console.log(users);
+
+    return users.filter(u => u != null);
+  }
 
   registerClient(userId: string, socketId: string, color: string, icon: UserIcon) {
     this.clients.set(socketId, { id: socketId, userId, color, icon });

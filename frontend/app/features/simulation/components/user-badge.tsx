@@ -1,13 +1,18 @@
+import { useNavigate } from "react-router";
+import { useAuthStore } from "~/features/auth/auth.store";
+
 type UserBadgeProps = {
   username: string;
   bodycount: number;
-  image: string;
+  icon: string;
+  color: string;
 };
 
 export default function UserBadge({
   username,
   bodycount,
-  image,
+  icon,
+  color
 }: UserBadgeProps) {
   return (
     <div
@@ -26,17 +31,18 @@ export default function UserBadge({
         backgroundColor: "black",
       }}
     >
-      {/*<img
-        src={image}
-        alt={username}
+      <div
         style={{
-          width: 40,
-          height: 40,
-          borderRadius: "50%",
-          objectFit: "cover",
+          backgroundColor: color,
+          maskImage: `url(/icons/${icon}.svg)`,
+          WebkitMaskImage: `url(/icons/${icon}.svg)`,
+          maskRepeat: 'no-repeat',
+          maskPosition: 'center',
+          maskSize: 'contain',
+          width: 24,   // set to your icon's size
+          height: 24,
         }}
-      />*/}
-
+      />
       <div>
         <div>{username}</div>
         <div style={{ fontSize: 12, opacity: 0.7 }}>

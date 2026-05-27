@@ -67,7 +67,7 @@ export default function RoomsPage() {
                         className="rooms-avatar"
                         onClick={() => user && navigate(`/user`)}
                         style={{
-                            backgroundColor: user ? getAvatarColor(user.id) : '#6366f1', // Dynamically matching the profile page
+                            backgroundColor: user ? user.color : '#6366f1', // Dynamically matching the profile page
                             cursor: user ? 'pointer' : 'default',
                         }}
                         title={user ? `${user.firstName} ${user.lastName}` : 'Profile'}
