@@ -25,7 +25,7 @@ export default function GUI() {
         style={{
           position: "fixed",
           top: 20,
-          right: 80,
+          right: 60,
 
           width: 144,
           height: 40,
@@ -50,7 +50,7 @@ export default function GUI() {
         style={{
           position: "fixed",
           top: 20,
-          right: 240,
+          right: 213,
 
           width: 144,
           height: 40,
@@ -70,7 +70,7 @@ export default function GUI() {
         style={{
           position: "fixed",
           top: 20,
-          right: 400,
+          right: 365,
 
           width: 40,
           height: 40,
@@ -88,6 +88,31 @@ export default function GUI() {
         }}
       >
         {isLoading ? 'Loading...' : bodyCount.toString()}
+      </div>
+
+      <div
+        style={{
+          position: "fixed",
+          top: 20,
+          left: 10,
+
+          width: 90,
+          height: 40,
+
+          overflow: "hidden",
+          border: "1px solid white",
+
+          opacity: isLoading ? 0.5 : 1,
+          backgroundColor: 'black',
+          color: 'white',
+          fontWeight: 'bold',
+
+          justifyContent: "center",
+          alignItems: "center",
+          display: "flex",
+        }}
+      >
+        nobody
       </div>
 
       <UserList />

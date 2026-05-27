@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
-import { useSimulationContext } from './simulation-provider';
 import { Events } from '../sim.schema';
+import { useNavigate } from 'react-router';
+import { useAuthStore } from '~/features/auth/auth.store';
+import { useSimulationContext } from './simulation-provider';
 
 export default function Avatar() {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
 
   const [hover, setHover] = useState(false);
   const { socket, currentRoom } = useSimulationContext();
@@ -19,11 +21,15 @@ export default function Avatar() {
     navigate("/user");
   }
 
+  const initials = user
+    ? ((user.firstName?.[0] ?? '') + (user.lastName?.[0] ?? '')).toUpperCase() || '?'
+    : '?';
+
   return (
     <div
       style={{
         position: "fixed",
-        top: 16,
+        top: 20,
         right: 16,
       }}
     >
@@ -31,21 +37,12 @@ export default function Avatar() {
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
         style={{
-          width: 48,
-          height: 48,
-
-          borderRadius: "50%",
-          overflow: "hidden",
-          border: "2px solid white",
-
-          transform: hover ? "scale(1.1)" : "scale(1)",
-          transition: "0.2s",
           position: "relative",
           cursor: "pointer",
         }}
         onClick={handleClick}
       >
-        <img
+        {/*<img
           src="/avatar.png"
           alt="avatar"
           style={{
@@ -53,10 +50,22 @@ export default function Avatar() {
             height: "100%",
             objectFit: "cover",
           }}
-        />
+        />*/}
+        <div
+          className="rooms-avatar"
+          onClick={() => user && navigate(`/user`)}
+          style={{
+            height: 40,
+            backgroundColor: user ? user.color : '#6366f1', // Dynamically matching the profile page
+            cursor: user ? 'pointer' : 'default',
+          }}
+          title={user ? `${user.firstName} ${user.lastName}` : 'Profile'}
+        >
+          {initials}
+        </div>
       </div>
 
-      {hover && (
+      {/*{hover && (
         <div
           style={{
             position: "absolute",
@@ -74,7 +83,7 @@ export default function Avatar() {
         >
           go to profile
         </div>
-      )}
+      )*/}
     </div>
   );
 }

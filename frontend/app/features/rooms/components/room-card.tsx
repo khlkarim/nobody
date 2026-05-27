@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Room } from '../rooms.api';
 import { useNavigate } from 'react-router';
 import { EditRoomModal } from './edit-room-modal';
 import { useAuthStore } from '~/features/auth/auth.store';
+import { useUsers } from '~/features/simulation/user-list.store';
 
 interface Props {
     room: Room;
@@ -15,7 +16,7 @@ export function RoomCard({ room }: Props) {
     const navigate = useNavigate();
     const memberCount = room.memberships.length;
     const isCreator = user?.id === room.creator.id;
-    const formattedDate = new Date(room.createdAt).toISOString().slice(0, 10).replace(/-/g, '.');
+    const formattedDate = new Date(room.createdAt).toISOString().slice(0, 10).replace(/-/g, '/');
 
     async function handleJoin() {
         navigate('/simulation?room=' + room.name);
@@ -28,18 +29,16 @@ export function RoomCard({ room }: Props) {
                     <div className="room-card__meta">
                         <div className="box">{room.name}</div>
 
-                        <div className="box">
+                        {/*<div className="box">
                             {memberCount >= 1000
                                 ? `${(memberCount / 1000).toFixed(0)}k`
                                 : memberCount}
-                        </div>
+                        </div>*/}
 
                         {isCreator && (
-                            <>
-                                <div className='box'>{formattedDate}</div>
-                                <div className='box'>creator</div>
-                            </>
+                            <div className='box'>owned by you</div>
                         )}
+                        <div className='box'>{formattedDate}</div>
                     </div>
 
                     <div className="room-card__actions">

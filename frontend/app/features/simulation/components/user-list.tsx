@@ -1,12 +1,49 @@
 import { useAuthStore } from "~/features/auth/auth.store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserBadge from "./user-badge";
+import { useUsers } from "../user-list.store";
+import { useSimulationContext } from "./simulation-provider";
+import { usersApi } from "~/features/users/users.api";
 
 export default function UserList() {
 	const [hover, setHover] = useState(false);
 	const [open, setOpen] = useState(false);
+	const [socketMap, setSocketMap] = useState<Record<string, string[]>>({});
 
+	const { currentRoom } = useSimulationContext();
 	const { isLoading } = useAuthStore();
+	const { users, load } = useUsers();
+	const { simState } = useSimulationContext();
+
+	useEffect(() => {
+		load(currentRoom);
+	}, [load]);
+
+	// Whenever the user list changes, fetch socket IDs for every user
+	// and build a userId → socketIds lookup map
+	useEffect(() => {
+		if (!users?.length) return;
+
+		const fetchSocketIds = async () => {
+			const entries = await Promise.all(
+				users.map(async (user) => {
+					const socketIds = await usersApi.getSocketIdsByUserId(user.id);
+					return [user.id, socketIds] as const;
+				})
+			);
+			setSocketMap(Object.fromEntries(entries));
+		};
+
+		fetchSocketIds();
+	}, [users]);
+
+	// Sum bodies whose owner socket belongs to any of the user's connections
+	const getBodyCount = (userId: string): number => {
+		const socketIds = socketMap[userId];
+		if (!socketIds?.length || !simState?.bodies) return 0;
+		const socketSet = new Set(socketIds);
+		return Object.values(simState.bodies).filter((body) => socketSet.has(body.owner)).length;
+	};
 
 	return <>
 		{open && <>
@@ -16,31 +53,22 @@ export default function UserList() {
 					bottom: 16,
 					right: 16,
 					top: 96,
-
-					width: 424,
-
+					width: 388,
 					overflow: "hidden scroll",
 					border: "1px solid white",
 					backgroundColor: "black",
-
 					opacity: isLoading ? 0.5 : 1
 				}}
 			>
-				<UserBadge username="John Doe" bodycount={5} image="/avatar.png" />
-				<UserBadge username="Jane Doe" bodycount={5} image="/avatar.png" />
-				<UserBadge username="Jordan Doe" bodycount={5} image="/avatar.png" />
-				<UserBadge username="John Doe" bodycount={5} image="/avatar.png" />
-				<UserBadge username="Jane Doe" bodycount={5} image="/avatar.png" />
-				<UserBadge username="Jordan Doe" bodycount={5} image="/avatar.png" />
-				<UserBadge username="John Doe" bodycount={5} image="/avatar.png" />
-				<UserBadge username="Jane Doe" bodycount={5} image="/avatar.png" />
-				<UserBadge username="Jordan Doe" bodycount={5} image="/avatar.png" />
-				<UserBadge username="John Doe" bodycount={5} image="/avatar.png" />
-				<UserBadge username="Jane Doe" bodycount={5} image="/avatar.png" />
-				<UserBadge username="Jordan Doe" bodycount={5} image="/avatar.png" />
-				<UserBadge username="John Doe" bodycount={5} image="/avatar.png" />
-				<UserBadge username="Jane Doe" bodycount={5} image="/avatar.png" />
-				<UserBadge username="Jordan Doe" bodycount={5} image="/avatar.png" />
+				{users?.map(user => (
+					<UserBadge
+						key={user.id}
+						username={user.firstName + user.lastName}
+						bodycount={getBodyCount(user.id)}
+						icon={user.icon}
+						color={user.color}
+					/>
+				))}
 			</div>
 
 			<div
@@ -51,7 +79,7 @@ export default function UserList() {
 				style={{
 					position: "fixed",
 					bottom: 16,
-					right: 448,
+					right: 412,
 
 					width: 32,
 					height: 32,
@@ -66,6 +94,8 @@ export default function UserList() {
 					justifyContent: "center",
 					alignItems: "center",
 					display: "flex",
+
+					cursor: "pointer"
 				}}
 			>
 				{">"}
@@ -96,6 +126,8 @@ export default function UserList() {
 					justifyContent: "center",
 					alignItems: "center",
 					display: "flex",
+
+					cursor: "pointer"
 				}}
 			>
 				{"<"}

@@ -3,16 +3,20 @@ import { useAuthStore } from "~/features/auth/auth.store";
 import { useSimulationContext } from "./simulation-provider";
 import NotificationBadge from "./notification-badge";
 import useSSE from "../sim.sse";
+import { useUsers } from "../user-list.store";
 
 export default function NotificationList() {
   const { isLoading } = useAuthStore();
   const { currentRoom } = useSimulationContext();
 
+  const { refresh } = useUsers();
   const [notifications, setNotifications] = useState<any[]>([]);
 
   useSSE({
     roomId: currentRoom,
     onMessage: (data) => {
+      refresh(currentRoom);
+
       setNotifications((prev) => [...prev, data]);
 
       setTimeout(() => {
