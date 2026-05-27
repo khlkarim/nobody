@@ -19,8 +19,6 @@ export default function UserList() {
 		load(currentRoom);
 	}, [load]);
 
-	// Whenever the user list changes, fetch socket IDs for every user
-	// and build a userId → socketIds lookup map
 	useEffect(() => {
 		if (!users?.length) return;
 
@@ -37,12 +35,13 @@ export default function UserList() {
 		fetchSocketIds();
 	}, [users]);
 
-	// Sum bodies whose owner socket belongs to any of the user's connections
 	const getBodyCount = (userId: string): number => {
 		const socketIds = socketMap[userId];
 		if (!socketIds?.length || !simState?.bodies) return 0;
 		const socketSet = new Set(socketIds);
-		return Object.values(simState.bodies).filter((body) => socketSet.has(body.owner)).length;
+		return [...simState.bodies.values()].filter((body) => {
+			return socketSet.has(body.owner);
+		}).length;
 	};
 
 	return <>

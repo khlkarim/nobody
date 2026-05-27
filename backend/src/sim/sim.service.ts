@@ -21,7 +21,7 @@ export class SimService {
       return [];
     }
 
-    return socketIds;
+    return Array.from(socketIds);
   }
 
   async getUsersByRoom(roomId: string) {

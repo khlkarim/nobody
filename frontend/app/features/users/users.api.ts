@@ -7,7 +7,7 @@ export const usersApi = {
   getSocketIdsByUserId: async (userId: string): Promise<string[]> => {
     const res = await api.get(`simulation/sockets/${userId}`);
     console.log(res);
-    return z.array(z.string()).parse(res);
+    return z.array(z.string()).parse(res.data);
   },
 
   getUsersByRoom: async (roomId: string): Promise<UserResponse[]> => {
