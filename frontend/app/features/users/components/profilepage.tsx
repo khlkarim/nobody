@@ -26,6 +26,8 @@ export default function ProfilePage() {
     setSuccess(false);
     setIsLoading(true);
     try {
+      if (!user) throw new Error('User not found');
+      
       await usersApi.editGQL(user.id, { firstName, lastName });
       await hydrateUser(); 
       setSuccess(true);
