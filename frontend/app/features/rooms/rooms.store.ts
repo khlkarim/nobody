@@ -25,7 +25,7 @@ export const useRoomsStore = create<RoomsState>()((set) => ({
     getRooms: async (search?) => {
         set({ isLoading: true, error: null });
         try {
-            const rooms = await roomsApi.getRooms(search);
+            const rooms = await roomsApi.getRoomsGQL(search);
             set({ rooms, isLoading: false });
         } catch (err) {
             set({ error: String(err), isLoading: false });
@@ -35,7 +35,7 @@ export const useRoomsStore = create<RoomsState>()((set) => ({
     createRoom: async (name, creatorId, description?) => {
         set({ isLoading: true, error: null });
         try {
-            const room = await roomsApi.createRoom({ name, description, creatorId });
+            const room = await roomsApi.createRoomGQL({ name, description, creatorId });
             set((s) => ({ rooms: [room, ...s.rooms], isLoading: false }));
         } catch (err) {
             set({ error: String(err), isLoading: false });
@@ -46,7 +46,7 @@ export const useRoomsStore = create<RoomsState>()((set) => ({
     updateRoom: async (roomId, name, description?) => {
         set({ error: null });
         try {
-            const updated = await roomsApi.updateRoom({ roomId, name, description });
+            const updated = await roomsApi.updateRoomGQL({ roomId, name, description });
             set((s) => ({
                 rooms: s.rooms.map((r) => (r.id === roomId ? updated : r)),
             }));
@@ -59,7 +59,7 @@ export const useRoomsStore = create<RoomsState>()((set) => ({
     deleteRoom: async (roomId) => {
         set({ error: null });
         try {
-            await roomsApi.deleteRoom(roomId);
+            await roomsApi.deleteRoomGQL(roomId);
             set((s) => ({ rooms: s.rooms.filter((r) => r.id !== roomId) }));
         } catch (err) {
             set({ error: String(err) });

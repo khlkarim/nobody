@@ -27,7 +27,7 @@ export function UserProfile({ user }: UserProfileProps) {
 
     if (confirmed) {
       logout();
-      usersApi.delete(user.id)
+      usersApi.deleteGQL(user.id)
         .then(() => {
           navigate("/auth/login");
         }).catch((err) => {
@@ -143,12 +143,12 @@ export function UserProfile({ user }: UserProfileProps) {
           edit profile
         </button>
 
-        {/*<button
+        <button
           className="box"
           onClick={handleDeleteClick}
         >
           delete profile
-        </button>*/}
+        </button>
       </div>
     </div>
   );

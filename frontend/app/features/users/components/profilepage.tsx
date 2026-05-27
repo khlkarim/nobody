@@ -26,7 +26,7 @@ export default function ProfilePage() {
     setSuccess(false);
     setIsLoading(true);
     try {
-      await usersApi.updateProfile(user.id, { firstName, lastName });
+      await usersApi.editGQL(user.id, { firstName, lastName });
       await hydrateUser(); 
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);

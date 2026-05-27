@@ -6,11 +6,14 @@ export const userResponseSchema = z.object({
   email: z.string(),
   firstName: z.string(),
   lastName: z.string(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
-  deletedAt: z.coerce.date().nullable(),
+  createdAt: z.string().datetime().transform((v) => new Date(v)),
+  updatedAt: z.string().datetime().transform((v) => new Date(v)),
+  deletedAt: z.string().datetime().nullable().optional().transform((v) =>
+    v ? new Date(v) : null
+  ),
   color: z.string().default('#ffffff'),
   icon: z.enum(UserIcon).default(UserIcon.CIRCLE),
+  memberships: z.array(z.any()).default([]),
 });
 
 export type UserResponse = z.infer<typeof userResponseSchema>;

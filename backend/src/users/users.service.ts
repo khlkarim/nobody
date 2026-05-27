@@ -9,12 +9,15 @@ import { UserEntity } from './users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto, UpdateUserDto } from './users.dto';
 import { UserIcon } from './users.enums';
+import { Room } from 'src/rooms/room.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<UserEntity>,
+    @InjectRepository(Room)
+    private readonly roomsRepository: Repository<Room>,
   ) { }
 
   async findAll() {
@@ -107,6 +110,26 @@ export class UsersService {
       userPreload.email = updateUserDto.email;
     }
 
+    userPreload.memberships = userPreload.memberships || [];
+    userPreload.updatedAt = new Date();
+
     return await this.usersRepository.save(userPreload);
+  }
+
+  async delete(id: UserEntity['id']) {
+    const user = await this.usersRepository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new UnprocessableEntityException({
+        status: HttpStatus.UNPROCESSABLE_ENTITY,
+        errors: {
+          email: 'notFound',
+        },
+      });
+    }
+
+    await this.roomsRepository.delete({ creatorId: id });
+    await this.usersRepository.delete(id);
+    return true;
   }
 }

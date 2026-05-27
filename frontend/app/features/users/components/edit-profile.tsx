@@ -22,7 +22,7 @@ export function EditProfile({ user }: UserProfileProps) {
   const [cancelHover, setCancelHover] = useState(false);
 
   const handleSubmitClick = () => {
-    usersApi.edit(user.id, {
+    usersApi.editGQL(user.id, {
       firstName,
       lastName,
       color,
