@@ -1,3 +1,26 @@
+# nobody
+a distributed n-body simulation using nestjs, websockets, sse and graphql.
+
+> [!WARNING]
+> the branch named final is actually the main branch 
+
+# contributions
+## chourou houssem:
+- graphql 
+- front-end rooms page
+- sse rooms
+## ben hazem ahmed omar
+- simulation frontend visualization
+- front-end user profile and modification
+- sse notifications
+## skhiri ahmed
+- rest api for rooms
+- graqhql layer on existant rest api
+## khili karim 
+- authentification flow
+- simulation backend service
+
+# usage
 ```bash
 git clone git@github.com:khlkarim/nobody.git .
 cd nobody
@@ -14,5 +37,3 @@ pnpm install
 pnpm run dev
 ```
 
-go to: `http://localhost:5173/` to test auth
-go to: `http://localhost:5173/sim` to test sim
