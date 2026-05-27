@@ -70,6 +70,7 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
 
     socket.current.emit(Events.ROOM_LEAVE, { id: currentRoom });
     setIsJoined(false);
+    setCurrentRoom('');
     navigate('/');
   }
 

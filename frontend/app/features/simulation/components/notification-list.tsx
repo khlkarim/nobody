@@ -13,12 +13,11 @@ export default function NotificationList() {
   useSSE({
     roomId: currentRoom,
     onMessage: (data) => {
-      console.log("Received SSE message:", data);
+      setNotifications((prev) => [...prev, data]);
 
-      setNotifications((prev) => [
-        ...prev,
-        (data as any).payload,
-      ]);
+      setTimeout(() => {
+        setNotifications((prev) => prev.filter((n) => n !== data));
+      }, 4000);
     },
   });
 
@@ -39,15 +38,15 @@ export default function NotificationList() {
         opacity: isLoading ? 0.5 : 1,
       }}
     >
-      <NotificationBadge fullname="John Doe" hasJoined={true} />
-
-      {notifications.map((n, i) => (
-        <NotificationBadge
-          key={i}
-          fullname={n.fullname}
-          hasJoined={n.hasJoined}
-        />
-      ))}
+      {notifications.map((n, i) => {
+        return (
+          <NotificationBadge
+            key={i}
+            fullname={n.payload.fullName}
+            hasJoined={n.payload.hasJoined}
+          />
+        );
+      })}
     </div>
   );
 }

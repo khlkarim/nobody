@@ -125,6 +125,7 @@ export class SimGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     const user = await this.usersService.findById(userId);
     const fullName = `${user?.firstName ?? 'Unknown'} ${user?.lastName ?? 'Unknown'}`;
+    
     this.simService.emitEvent(roomId, {
       data: { payload: { hasJoined: true, fullName } },
     });
